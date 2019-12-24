@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="/stylesheets/all.css">
+  <!-- OWN CSS -->
+  <link rel="stylesheet" href="/stylesheets/MyCss/dashboard.css">
+
+  <title>Dashboard</title>
+</head>
+
+<body>
+  <div class="container-fluid px-0">
+    <ul class="nav nav-tabs pl-4 my-nav" role="tablist">
+      <li class="nav-item my-auto ml-5">
+        <a class="nav-link border rounded-circle" href="/"><i class="fas fa-arrow-left"></i></a>
+      </li>
+      <li class="nav-item my-auto ml-2">
+        <a href="/dashboard" class="text-white nav-title">Dashboard</a>
+      </li>
+      <li class="ml-auto my-auto mr-5 row pr-5">
+        <select id="selectAssetList" class="custom-select">
+          <option value="0">Test & Packaging Machine</option>
+          <option selected value="1">Punching Machine</option>
+        </select>
+      </li>
+    </ul>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+      <div class="container-fluid active tab-pane px-5 text-white"><br>
+        <!--Select mode button group-->
+        <div class="btn-group mx-4">
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio1" name="viewMode" value="0" checked>
+            <label class=" text-white label-radio label-first" for="customRadio1">Today</label>
+          </div>
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio2" name="viewMode" value="1">
+            <label class=" text-white label-radio" for="customRadio2">Current Week</label>
+          </div>
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio3" name="viewMode" value="2">
+            <label class=" text-white label-radio" for="customRadio3">Current Month</label>
+          </div>
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio4" name="viewMode" value="3">
+            <label class=" text-white label-radio" for="customRadio4">Current Quarter</label>
+          </div>
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio5" name="viewMode" value="4">
+            <label class=" text-white label-radio" for="customRadio5">Current Year</label>
+          </div>
+        </div>
+
+        <!--TEST AND PACKING ASSET-->
+        <div id="testAndPackingAsset">
+          <!--Chart view TODAY-->
+
+          <div class="row div-border mt-4  today">
+            <div class="col-sm gauge-container">
+              Product counter
+              <div class="realtime productCounter"></div>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  today">
+            <!-- <div class="col-sm-2 gauge-container">
+              Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  today">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage %
+              <div class="content cabinetHumidity">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT WEEK-->
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+              Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+              Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage %
+              <div class="content cabinetHumidity">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT MONTH-->
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage %
+              <div class="content cabinetHumidity">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT QUARTER-->
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage %
+              <div class="content cabinetHumidity">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT YEAR-->
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage oC
+              <div class="content cabinetTemp">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage %
+              <div class="content cabinetHumidity">0</div>
+            </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!--PUNCHING ASSET-->
+        <div id="punchingAsset">
+          <!--Chart view TODAY-->
+
+          <div class="row div-border mt-4  today">
+            <div class="col-sm gauge-container">
+              Product counter
+              <div class="realtime productCounter"></div>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  today">
+            <!-- <div class="col-sm-2 gauge-container">
+                Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  today">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage %
+                <div class="content cabinetHumidity">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  today">
+            <!-- <div class="col-sm-2 gauge-container">
+                    Avarage BAR
+                  <div class="content oilPressure">0</div>
+                </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilPressure"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  today">
+            <!-- <div class="col-sm-2 gauge-container">
+                      Avarage oC
+                    <div class="content oilTemp">0</div>
+                  </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  today">
+            <!-- <div class="col-sm-2 gauge-container">
+                        Avarage L/H
+                      <div class="content oilLevel">0</div>
+                    </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilLevel"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT WEEK-->
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage %
+                <div class="content cabinetHumidity">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+                    Avarage BAR
+                  <div class="content oilPressure">0</div>
+                </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilPressure"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+                      Avarage oC
+                    <div class="content oilTemp">0</div>
+                  </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentWeek">
+            <!-- <div class="col-sm-2 gauge-container">
+                        Avarage L/H
+                      <div class="content oilLevel">0</div>
+                    </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilLevel"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT MONTH-->
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage %
+                <div class="content cabinetHumidity">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                    Avarage BAR
+                  <div class="content oilPressure">0</div>
+                </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilPressure"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                      Avarage oC
+                    <div class="content oilTemp">0</div>
+                  </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentMonth">
+            <!-- <div class="col-sm-2 gauge-container">
+                        Avarage L/H
+                      <div class="content oilLevel">0</div>
+                    </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilLevel"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT QUARTER-->
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage %
+                <div class="content cabinetHumidity">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                    Avarage BAR
+                  <div class="content oilPressure">0</div>
+                </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilPressure"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                      Avarage oC
+                    <div class="content oilTemp">0</div>
+                  </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentQuarter">
+            <!-- <div class="col-sm-2 gauge-container">
+                        Avarage L/H
+                      <div class="content oilLevel">0</div>
+                    </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilLevel"></canvas>
+            </div>
+          </div>
+
+          <!--Chart view CURRENT YEAR-->
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart productCounter"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage oC
+                <div class="content cabinetTemp">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                  Avarage %
+                <div class="content cabinetHumidity">0</div>
+              </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart cabinetHumidity"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                    Avarage BAR
+                  <div class="content oilPressure">0</div>
+                </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilPressure"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                      Avarage oC
+                    <div class="content oilTemp">0</div>
+                  </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilTemp"></canvas>
+            </div>
+          </div>
+
+          <div class="row div-border mt-4  currentYear">
+            <!-- <div class="col-sm-2 gauge-container">
+                        Avarage L/H
+                      <div class="content oilLevel">0</div>
+                    </div> -->
+            <div class="col-sm chart-container">
+              <canvas class="chart oilLevel"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="/javascripts/jquery-3.3.1.min.js"></script>
+  <script src="/javascripts/popper.min.js"></script>
+  <script src="/javascripts/bootstrap.min.js"></script>
+  <!-- Just Gauge -->
+  <script src="/javascripts/raphael-2.1.4.min.js"></script>
+  <script src="/javascripts/justgage.js"></script>
+  <!-- Chart -->
+  <script src="/javascripts/moment.js"></script>
+  <script src="/javascripts/Chart.min.js"></script>
+  <script src="/javascripts/hammer.js"></script>
+  <script src="/javascripts/chartjs-plugin-zoom.js"></script>
+  <script src="/javascripts/chartjs-plugin-streaming.min.js"></script>
+  <!-- Socket IO -->
+  <script src="/javascripts/socket.io.js"></script>
+  <!-- Own scripts -->
+  <script src="/javascripts/MyScripts/dashboard.js"></script>
+</body>
+
+</html>

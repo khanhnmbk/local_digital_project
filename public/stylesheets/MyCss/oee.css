@@ -1,0 +1,219 @@
+body {
+    background-image: url('/images/GradientBackground_V2.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.nav{
+    min-height: 40px;
+    background: black;
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px 2px;
+}
+
+body {
+  overflow: auto;
+    height: 100%;
+}
+
+/* Style the navigation bar */
+.navbar {
+    width: 100%;
+    background-color: #555;
+    overflow: auto;
+  }
+  
+
+  
+  /* Navbar links on mouse-over */
+  .navbar a:hover {
+    background-color: #000;
+  }
+
+  .nav-title{
+    color : white;
+    font-size: 30px;
+  }
+
+  .nav-title:hover {
+      text-decoration: none;
+      color:#00cebc !important;
+  }
+  
+  
+  
+  /* Add responsiveness - will automatically display the navbar vertically instead of horizontally on screens less than 500 pixels */
+  @media screen and (max-width: 500px) {
+    .navbar a {
+      float: none;
+      display: block;
+    }
+  }
+
+.nav-title{
+  color : white;
+  
+}
+
+.rounded-circle {
+    width: 48px;
+    height: 48px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+i {
+    font-size: 22px;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    color: #0098a3
+}
+
+.nav-item {
+    display: inline-block;
+}
+
+.nav-link {
+    padding: 0.5rem 0.5rem;
+}
+
+.div-dashboard {
+    border-radius: 25px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: white;
+  width: 90%;  /*Tested and working as expected: */
+  padding-top: 1%;
+  margin: 0px auto;
+  float: none;
+}
+
+
+
+  /* *************************************************
+  /*                  GAUGE CSS
+  /* ************************************************* */
+
+  .gauge-container{
+    display: flex;
+    width : 100%;
+    height: 100%;
+    padding-right: 0px;
+    font-size: 25px;
+    padding-left: 20px;
+    /* margin-top : 25px; */
+}
+
+.gauge {
+ 
+  width : 100%;
+  height: 200px;
+ margin-top: auto
+}
+
+.gauge.oee{
+  height: 250px;
+}
+
+
+
+  /* *************************************************
+  /*                  CHART JS
+  /* ************************************************* */
+.chart {
+  
+  /* width: 100% !important;
+  margin: 2px; */
+  /* background: #05a993 */
+}
+
+
+
+.chart-container {
+  margin: 0 auto;
+  width: 90%;  
+  height: 450px;
+  padding-left: 0px;
+ }
+
+
+  /* *************************************************
+  /*                  CUSTOM RADIO
+  /* ************************************************* */
+
+.label-radio {
+  display: inline-block;
+  /* width: 00px; */
+  /* height: 60px; */
+  width: 130px;
+  border: solid 2px #39acb4;
+  border-left: 0px;
+  /* border-radius: 30px; */
+  /* font-size: 18px; */
+  padding: 5px;
+  margin: auto;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.label-radio:hover {
+    background: rgba(94, 206, 206, 0.5);
+}
+
+.input-radio {
+  display: none;
+}
+
+.input-radio:checked + label {
+  /* border: solid 2px #41aaaa; */
+  background: #39acb4;
+}
+
+.label-first{
+    border-left : solid 2px #39acb4;
+}
+
+  /* *************************************************
+  /*                COMBO GAUGE + CHART
+  /* ************************************************* */
+
+  .div-border{
+    margin: 4px;
+    border-radius: 10px;
+    border: solid 1px #05a993;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    margin: 0px auto;
+    background: #181616;
+    height: 300px;
+  }
+
+
+
+
+
+.content{
+  height: 80%;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  display: flex;
+  font-size: 90px;
+}
+
+
+
+/* Export to excel */
+.excel{
+  min-width : 230px ; 
+  background:#39acb4; 
+  border-color: #39acb4"
+}
+
+/* Navigation color */
+.my-nav{
+  background: #001312;
+}

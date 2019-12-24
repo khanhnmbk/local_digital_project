@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="/stylesheets/all.css">
+  <!-- OWN CSS -->
+  <link rel="stylesheet" href="/stylesheets/MyCss/oee.css">
+
+  <title>OEE</title>
+</head>
+
+<body>
+  <div class="container-fluid px-0">
+    <ul class="nav nav-tabs pl-4 my-nav" role="tablist">
+      <li class="nav-item my-auto ml-5">
+        <a class="nav-link border rounded-circle" href="/"><i class="fas fa-arrow-left"></i></a>
+      </li>
+      <li class="nav-item my-auto ml-2">
+        <a href="/oee" class="text-white nav-title">OEE</a>
+      </li>
+      <li class="ml-auto my-auto mr-5 row pr-5">
+        <select id="selectAssetList" class="custom-select">
+          <option value="0">Test & Packaging Machine</option>
+          <option selected value="1">Punching Machine</option>
+        </select>
+      </li>
+
+    </ul>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+      <div class="container-fluid active tab-pane px-5 text-white"><br>
+
+        <!--Select mode button group-->
+        <div class="row mx-4">
+          <div class="btn-group ">
+            <div class="text-center">
+              <input type="radio" class="input-radio " id="customRadio1" name="viewMode" value="0" checked>
+              <label class=" text-white label-radio label-first" for="customRadio1">Today</label>
+            </div>
+            <div class="text-center">
+              <input type="radio" class="input-radio " id="customRadio2" name="viewMode" value="1">
+              <label class=" text-white label-radio" for="customRadio2">Current Week</label>
+            </div>
+            <div class="text-center">
+              <input type="radio" class="input-radio " id="customRadio3" name="viewMode" value="2">
+              <label class=" text-white label-radio" for="customRadio3">Current Month</label>
+            </div>
+            <div class="text-center">
+              <input type="radio" class="input-radio " id="customRadio4" name="viewMode" value="3">
+              <label class=" text-white label-radio" for="customRadio4">Current Quarter</label>
+            </div>
+            <div class="text-center">
+              <input type="radio" class="input-radio " id="customRadio5" name="viewMode" value="4">
+              <label class=" text-white label-radio" for="customRadio5">Current Year</label>
+            </div>
+          </div>
+          <div class="dropdown ml-auto mr-4">
+            <button type="button" class="btn dropdown-toggle btn-primary excel"  data-toggle="dropdown">
+              Export to excel
+            </button>
+            <div class="dropdown-menu" style="min-width : 230px">
+              <a class="dropdown-item" id="reportWeek" href="#">Current week</a>
+              <a class="dropdown-item" id="reportMonth" href="#">Current month</a>
+              <a class="dropdown-item" id="reportQuarter" href="#">Current quarter</a>
+              <a class="dropdown-item" id="reportYear" href="#s">Current year</a>
+            </div>
+          </div>
+        </div>
+        
+
+        
+
+        <!--TEST AND PACKING ASSET - GAUGE -->
+        <div class="testAndPackingAsset my-4">
+
+          <div class="gauge-container row today">
+            <div id="gaugeTePaOeeToday" class="col-sm oee gauge"></div>
+            <div id="gaugeTePaAvailabilityToday" class="col-sm availability gauge"></div>
+            <div id="gaugeTePaPerformanceToday" class="col-sm performance gauge"></div>
+            <div id="gaugeTePaQualityToday" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentWeek">
+            <div id="gaugeTePaOeeCurrentWeek" class="col-sm oee gauge"></div>
+            <div id="gaugeTePaAvailabilityCurrentWeek" class="col-sm availability gauge"></div>
+            <div id="gaugeTePaPerformanceCurrentWeek" class="col-sm performance gauge"></div>
+            <div id="gaugeTePaQualityCurrentWeek" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentMonth">
+            <div id="gaugeTePaOeeCurrentMonth" class="col-sm oee gauge"></div>
+            <div id="gaugeTePaAvailabilityCurrentMonth" class="col-sm availability gauge"></div>
+            <div id="gaugeTePaPerformanceCurrentMonth" class="col-sm performance gauge"></div>
+            <div id="gaugeTePaQualityCurrentMonth" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentQuarter">
+            <div id="gaugeTePaOeeCurrentQuarter" class="col-sm oee gauge"></div>
+            <div id="gaugeTePaAvailabilityCurrentQuarter" class="col-sm availability gauge"></div>
+            <div id="gaugeTePaPerformanceCurrentQuarter" class="col-sm performance gauge"></div>
+            <div id="gaugeTePaQualityCurrentQuarter" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentYear">
+            <div id="gaugeTePaOeeCurrentYear" class="col-sm oee gauge"></div>
+            <div id="gaugeTePaAvailabilityCurrentYear" class="col-sm availability gauge"></div>
+            <div id="gaugeTePaPerformanceCurrentYear" class="col-sm performance gauge"></div>
+            <div id="gaugeTePaQualityCurrentYear" class="col-sm quality gauge"></div>
+          </div>
+
+        </div>
+
+
+        <!--PUNCHING ASSET - GAUGE -->
+        <div class="punchingAsset my-4">
+
+          <div class="gauge-container row today">
+            <div id="gaugePunchingOeeToday" class="col-sm oee gauge"></div>
+            <div id="gaugePunchingAvailabilityToday" class="col-sm availability gauge"></div>
+            <div id="gaugePunchingPerformanceToday" class="col-sm performance gauge"></div>
+            <div id="gaugePunchingQualityToday" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentWeek">
+            <div id="gaugePunchingOeeCurrentWeek" class="col-sm oee gauge"></div>
+            <div id="gaugePunchingAvailabilityCurrentWeek" class="col-sm availability gauge"></div>
+            <div id="gaugePunchingPerformanceCurrentWeek" class="col-sm performance gauge"></div>
+            <div id="gaugePunchingQualityCurrentWeek" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentMonth">
+            <div id="gaugePunchingOeeCurrentMonth" class="col-sm oee gauge"></div>
+            <div id="gaugePunchingAvailabilityCurrentMonth" class="col-sm availability gauge"></div>
+            <div id="gaugePunchingPerformanceCurrentMonth" class="col-sm performance gauge"></div>
+            <div id="gaugePunchingQualityCurrentMonth" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentQuarter">
+            <div id="gaugePunchingOeeCurrentQuarter" class="col-sm oee gauge"></div>
+            <div id="gaugePunchingAvailabilityCurrentQuarter" class="col-sm availability gauge"></div>
+            <div id="gaugePunchingPerformanceCurrentQuarter" class="col-sm performance gauge"></div>
+            <div id="gaugePunchingQualityCurrentQuarter" class="col-sm quality gauge"></div>
+          </div>
+
+          <div class="gauge-container row currentYear">
+            <div id="gaugePunchingOeeCurrentYear" class="col-sm oee gauge"></div>
+            <div id="gaugePunchingAvailabilityCurrentYear" class="col-sm availability gauge"></div>
+            <div id="gaugePunchingPerformanceCurrentYear" class="col-sm performance gauge"></div>
+            <div id="gaugePunchingQualityCurrentYear" class="col-sm quality gauge"></div>
+          </div>
+
+        </div>
+
+        <!--OEE mode button group-->
+        <div class="btn-group mt-4 mx-4">
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio6" name="oeeMode" value="0" checked>
+            <label class=" text-white label-radio label-first" for="customRadio6">OEE</label>
+          </div>
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio7" name="oeeMode" value="1">
+            <label class=" text-white label-radio" for="customRadio7">Availability</label>
+          </div>
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio8" name="oeeMode" value="2">
+            <label class=" text-white label-radio" for="customRadio8">Performance</label>
+          </div>
+          <div class="text-center">
+            <input type="radio" class="input-radio " id="customRadio9" name="oeeMode" value="3">
+            <label class=" text-white label-radio" for="customRadio9">Quality</label>
+          </div>
+        </div>
+
+        <div class="testAndPackingAsset my-4">
+          <div class="currentWeek">
+            <div class="chart-container">
+              <canvas class="chart oee"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart availability"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart performance"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart quality"></canvas>
+            </div>
+          </div>
+
+          <div class="currentMonth">
+            <div class="chart-container">
+              <canvas class="chart oee"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart availability"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart performance"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart quality"></canvas>
+            </div>
+          </div>
+
+          <div class="currentQuarter">
+            <div class="chart-container">
+              <canvas class="chart oee"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart availability"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart performance"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart quality"></canvas>
+            </div>
+          </div>
+
+          <div class="currentYear">
+            <div class="chart-container">
+              <canvas class="chart oee"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart availability"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart performance"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas class="chart quality"></canvas>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="punchingAsset my-4">
+            <div class="currentWeek">
+                <div class="chart-container">
+                  <canvas class="chart oee"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart availability"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart performance"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart quality"></canvas>
+                </div>
+              </div>
+    
+              <div class="currentMonth">
+                <div class="chart-container">
+                  <canvas class="chart oee"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart availability"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart performance"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart quality"></canvas>
+                </div>
+              </div>
+    
+              <div class="currentQuarter">
+                <div class="chart-container">
+                  <canvas class="chart oee"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart availability"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart performance"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart quality"></canvas>
+                </div>
+              </div>
+    
+              <div class="currentYear">
+                <div class="chart-container">
+                  <canvas class="chart oee"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart availability"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart performance"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas class="chart quality"></canvas>
+                </div>
+              </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="/javascripts/jquery-3.3.1.min.js"></script>
+  <script src="/javascripts/popper.min.js"></script>
+  <script src="/javascripts/bootstrap.min.js"></script>
+  <!-- Just Gauge -->
+  <script src="/javascripts/raphael-2.1.4.min.js"></script>
+  <script src="/javascripts/justgage.js"></script>
+  <!-- Chart -->
+  <script src="/javascripts/moment.js"></script>
+  <script src="/javascripts/Chart.min.js"></script>
+  <script src="/javascripts/hammer.js"></script>
+  <script src="/javascripts/chartjs-plugin-zoom.js"></script>
+  <script src="/javascripts/chartjs-plugin-streaming.min.js"></script>
+  <!-- Socket IO -->
+  <script src="/javascripts/socket.io.js"></script>
+  <!-- Own scripts -->
+  <script src="/javascripts/MyScripts/oee.js"></script>
+</body>
+
+</html>

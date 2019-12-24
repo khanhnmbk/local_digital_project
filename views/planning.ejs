@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="/stylesheets/all.css">
+    <!-- OWN CSS -->
+    <link rel="stylesheet" href="/stylesheets/MyCss/planning.css">
+
+    <title>Planning</title>
+</head>
+
+<body>
+    <div class="container-fluid px-0">
+        <ul class="nav nav-tabs pl-4 my-nav" role="tablist">
+            <li class="nav-item my-auto ml-5">
+                <a class="nav-link border rounded-circle" href="/"><i class="fas fa-arrow-left"></i></a>
+            </li>
+            <li class="nav-item my-auto ml-2">
+                <a href="/planning" class="text-white nav-title">Planning</a>
+            </li>
+            <li class="ml-auto my-auto mr-5 row pr-5">
+                <select id="selectAssetList" class="custom-select">
+                    <option value="0">Test & Packaging Machine</option>
+                    <option selected value="1">Punching Machine</option>
+                </select>
+            </li>
+
+        </ul>
+
+        <!-- Tab content -->
+        <div class="tab-content">
+            <div class="container-fluid active tab-pane px-5 text-white"><br>
+
+                <ul class="nav nav-tabs plan-tabs mx-4" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#appliedPlan">Applied plan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#editPlan">Edit plan</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content mx-4">
+                    <div id="appliedPlan" class="container-fluid tab-pane active div-border">
+                        <!-- Applied plan: Test and Packing Asset-->
+                        <div class="testAndPackingAsset row">
+                            <div class="col-sm-3 ">
+                                <div class="my-4 pl-3">
+                                    <label>Select week</label>
+                                    <input type="week" class="selectWeek"
+                                        style="width : 100%;     height: calc(1.5em + .75rem + 2px);">
+                                </div>
+                                <div class="my-4 pl-3">
+                                    <label for="#inputWeekTestAndPacking">Interval (min)</label>
+                                    <select disabled class="custom-select selectInterval" id="appliedSelectWeek">
+                                        <option value="60" selected>60</option>
+                                        <option value="30">30</option>
+                                        <option value="15">15</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="btn-group my-1">
+                                    <button type="button"
+                                        class="btn btn-success btn-mode mx-2 btn-mode">Working</button>
+                                    <button type="button"
+                                        class="btn btn-secondary btn-mode mx-2 btn-mode">Break</button>
+                                    <button type="button" class="btn btn-info btn-mode mx-2 btn-mode">Freetime</button>
+                                    <button type="button"
+                                        class="btn btn-danger btn-mode mx-2 btn-mode">Maintenance</button>
+                                    <button type="button" class="btn btn-warning btn-mode mx-2 btn-mode">Reset</button>
+                                </div>
+                                <div class="my-2 pb-4 pr-3 applied-table-wrapper">
+                                    <table class="table table-bordered text-white text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div>Hour</div>
+                                                </th>
+                                                <th>
+                                                    <div>Mon</div>
+                                                </th>
+                                                <th>
+                                                    <div>Tue</div>
+                                                </th>
+                                                <th>
+                                                    <div>Wed</div>
+                                                </th>
+                                                <th>
+                                                    <div>Thu</div>
+                                                </th>
+                                                <th>
+                                                    <div>Fri</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sat</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sun</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Applied plan: Punching Asset-->
+                        <div class="punchingAsset row">
+                            <div class="col-sm-3 ">
+                                <div class="my-4 pl-3">
+                                    <label>Select week</label>
+                                    <input type="week" class="selectWeek"
+                                        style="width : 100%; height: calc(1.5em + .75rem + 2px);">
+                                </div>
+                                <div class="my-4 pl-3">
+                                    <label>Interval (min)</label>
+                                    <select disabled class="custom-select selectInterval">
+                                        <option value="60" selected>60</option>
+                                        <option value="30">30</option>
+                                        <option value="15">15</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="btn-group my-1">
+                                    <button type="button"
+                                        class="btn btn-success btn-mode mx-2 btn-mode">Working</button>
+                                    <button type="button"
+                                        class="btn btn-secondary btn-mode mx-2 btn-mode">Break</button>
+                                    <button type="button" class="btn btn-info btn-mode mx-2 btn-mode">Freetime</button>
+                                    <button type="button"
+                                        class="btn btn-danger btn-mode mx-2 btn-mode">Maintenance</button>
+                                    <button type="button" class="btn btn-warning btn-mode mx-2 btn-mode">Reset</button>
+                                </div>
+                                <div class="my-2 pb-4 pr-3 applied-table-wrapper">
+                                    <table class="table table-bordered text-white text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div>Hour</div>
+                                                </th>
+                                                <th>
+                                                    <div>Mon</div>
+                                                </th>
+                                                <th>
+                                                    <div>Tue</div>
+                                                </th>
+                                                <th>
+                                                    <div>Wed</div>
+                                                </th>
+                                                <th>
+                                                    <div>Thu</div>
+                                                </th>
+                                                <th>
+                                                    <div>Fri</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sat</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sun</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--EDIT PLAN-->
+
+                    <div id="editPlan" class="container-fluid tab-pane fade div-border">
+
+                        <!--Test and Packing-->
+                        <div class="testAndPackingAsset row">
+                            <div class="col-sm-3 ">
+                                <div class="my-4 pl-3">
+                                    <label>Select week</label>
+                                    <input type="week" class="selectWeek"
+                                        style="width : 100%; height: calc(1.5em + .75rem + 2px);">
+                                </div>
+                                <div class="my-4 pl-3">
+                                    <label>Interval (min)</label>
+                                    <select class="custom-select selectInterval">
+                                        <option selected value="60">60</option>
+                                        <option value="30">30</option>
+                                        <option value="15">15</option>
+                                    </select>
+                                </div>
+
+                                <div class="my-4 pl-3">
+                                    <label>Repeat</label>
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio1"
+                                            name="tePa_repeat" value="0" checked>
+                                        <label class="custom-control-label" for="tePa_radio1">None</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio2"
+                                            name="tePa_repeat" value="1">
+                                        <label class="custom-control-label" for="tePa_radio2">This month</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio3"
+                                            name="tePa_repeat" value="2">
+                                        <label class="custom-control-label" for="tePa_radio3">This quarter</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio4"
+                                            name="tePa_repeat" value="3">
+                                        <label class="custom-control-label" for="tePa_radio4">This year</label>
+                                    </div>
+                                </div>
+
+
+                                <div class="my-5 pl-3">
+                                    <button class="btn btn-primary btn-block ml-auto btnApply"
+                                        style="width : 50%">Apply</button>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-9">
+                                <div class="btn-group my-1">
+                                    <button type="button"
+                                        class="btn btn-success btn-mode mx-2 btn-mode btnWorking">Working</button>
+                                    <button type="button"
+                                        class="btn btn-secondary btn-mode mx-2 btn-mode btnBreak">Break</button>
+                                    <button type="button"
+                                        class="btn btn-info btn-mode mx-2 btn-mode btnFreetime">Freetime</button>
+                                    <button type="button"
+                                        class="btn btn-danger btn-mode mx-2 btn-mode btnMaintenance">Maintenance</button>
+                                    <button type="button"
+                                        class="btn btn-warning btn-mode mx-2 btn-mode btnReset">Reset</button>
+                                </div>
+
+                                <div class="my-2 pb-4 pr-3 table-wrapper">
+                                    <table class="table table-bordered text-white text-center editTable">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div>Hour</div>
+                                                </th>
+                                                <th>
+                                                    <div>Mon</div>
+                                                </th>
+                                                <th>
+                                                    <div>Tue</div>
+                                                </th>
+                                                <th>
+                                                    <div>Wed</div>
+                                                </th>
+                                                <th>
+                                                    <div>Thu</div>
+                                                </th>
+                                                <th>
+                                                    <div>Fri</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sat</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sun</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Punching-->
+                        <div class="punchingAsset row">
+                            <div class="col-sm-3 ">
+                                <div class="my-4 pl-3">
+                                    <label>Select week</label>
+                                    <input type="week" class="selectWeek"
+                                        style="width : 100%; height: calc(1.5em + .75rem + 2px);">
+                                </div>
+                                <div class="my-4 pl-3">
+                                    <label>Interval (min)</label>
+                                    <select class="custom-select selectInterval">
+                                        <option selected value="60">60</option>
+                                        <option value="30">30</option>
+                                        <option value="15">15</option>
+                                    </select>
+                                </div>
+
+                                <div class="my-4 pl-3">
+                                    <label>Repeat</label>
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio5"
+                                            name="punc_repeat" value="0" checked >
+                                        <label class="custom-control-label" for="tePa_radio5">None</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio6"
+                                            name="punc_repeat" value="1">
+                                        <label class="custom-control-label" for="tePa_radio6">This month</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio7"
+                                            name="punc_repeat" value="2">
+                                        <label class="custom-control-label" for="tePa_radio7">This quarter</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio mx-5">
+                                        <input type="radio" class="custom-control-input" id="tePa_radio8"
+                                            name="punc_repeat" value="3">
+                                        <label class="custom-control-label" for="tePa_radio8">This year</label>
+                                    </div>
+                                </div>
+
+                                <div class="my-5 pl-3">
+                                    <button class="btn btn-primary btn-block ml-auto btnApply"
+                                        style="width : 50%">Apply</button>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-9">
+                                <div class="btn-group my-1">
+                                    <button type="button"
+                                        class="btn btn-success btn-mode mx-2 btn-mode btnWorking">Working</button>
+                                    <button type="button"
+                                        class="btn btn-secondary btn-mode mx-2 btn-mode btnBreak">Break</button>
+                                    <button type="button"
+                                        class="btn btn-info btn-mode mx-2 btn-mode btnFreetime">Freetime</button>
+                                    <button type="button"
+                                        class="btn btn-danger btn-mode mx-2 btn-mode btnMaintenance">Maintenance</button>
+                                    <button type="button"
+                                        class="btn btn-warning btn-mode mx-2 btn-mode btnReset">Reset</button>
+                                </div>
+
+                                <div class="my-2 pb-4 pr-3 table-wrapper">
+                                    <table class="table table-bordered text-white text-center editTable">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div>Hour</div>
+                                                </th>
+                                                <th>
+                                                    <div>Mon</div>
+                                                </th>
+                                                <th>
+                                                    <div>Tue</div>
+                                                </th>
+                                                <th>
+                                                    <div>Wed</div>
+                                                </th>
+                                                <th>
+                                                    <div>Thu</div>
+                                                </th>
+                                                <th>
+                                                    <div>Fri</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sat</div>
+                                                </th>
+                                                <th>
+                                                    <div>Sun</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                                <td class="selectable"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Spinner publish modal -->
+    <div class="modal fade bd-example-modal-lg" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        id="spinnerModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="width: 48px">
+                <span class="fa fa-spinner fa-spin fa-3x"></span>
+                <br>
+                Saving...
+            </div>
+        </div>
+    </div>
+
+    <!-- Success modal -->
+    <div class="modal fade" id="successModal" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="thank-you-pop">
+                        <h1 class="text-success">Save!</h1>
+                        <button class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/javascripts/jquery-3.3.1.min.js"></script>
+    <script src="/javascripts/popper.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/moment.js"></script>
+    <!-- Socket IO -->
+    <script src="/javascripts/socket.io.js"></script>
+    <!-- Own scripts -->
+    <script src="/javascripts/MyScripts/planning.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,741 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('digitalproject:server');
+var http = require('http');
+var event = require('events');
+var emitter = new event.EventEmitter();
+var dashboardModel = require('../model/dashboard-data');
+var planningModel = require('../model/planning-data');
+var oeeModel = require('../model/oee-data');
+var async = require('async');
+var s7node = require('../model/s7_module');
+
+var moment = require('moment');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/SimulationDB_2', { useNewUrlParser: true });
+
+var $testAndPackingAssetId, $punchingAssetId, $token;
+var $currentTestAndPacking = { data: { productCounter: 0, cabinetTemp: 30, cabinetHumidity: 70 }, timestamp: null };
+var $currentPunching = { data: { productCounter: 0, cabinetTemp: 30, cabinetHumidity: 70, oilPressure: 0, oilTemp: 31, oilLevel: 0 }, timestamp: null };
+var $fixedPrepareTime = 0.5;
+
+let $plcObject = {
+  name : "S7_1500",
+  address : "192.168.1.150",
+  port : 102,
+  rack : 0,
+  slot : 1
+};
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+var io = require('socket.io')(server);
+
+//------------------------ CONNECT TO SIEMENS PLC AND READ DATA -----------------------------------------
+
+async.series([
+  function (callback) {
+
+  },
+  function (callback) {
+    mindsphere.getAssetId($token, 'Punching', function (assetId) {
+      if (assetId) {
+        $punchingAssetId = assetId;
+        console.log($punchingAssetId);
+        callback();
+      }
+    });
+  },
+  function (callback) {
+    console.log('Start getting and writing data');
+    getAndWriteData($token);
+    //updateOEE();
+    callback();
+  }
+], function (err, result) {
+  if (err) console.log(err);
+});
+
+//------------------------ GET QUARTER AND YEAR DASHBOARD -----------------------------------------
+// async.series([
+//   function (callback) {
+//     //Current quarter
+//     dashboardModel.getQuarterData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+//       $quarterDashboard = data;
+//       callback();
+//     });
+//   },
+//   function (callback) {
+//     //Current year
+//     dashboardModel.getYearData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+//       $yearDashboard = data;
+//       callback();
+//     });
+//   }
+// ])
+
+// var longPeriod = 60;  //1 hour
+// setInterval(function() {
+//   $quarterDashboard = null;
+//   $yearDashboard = null;
+//   async.series([
+//     function (callback) {
+//       //Current quarter
+//       dashboardModel.getQuarterData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+//         $quarterDashboard = data;
+//         callback();
+//       });
+//     },
+//     function (callback) {
+//       //Current year
+//       dashboardModel.getYearData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+//         $yearDashboard = data;
+//         callback();
+//       });
+//     }
+//   ])
+// }, longPeriod * 60 * 1000);
+
+//------------------------ SET INTERVAL -----------------------------------------
+
+//Renew token after 20 mins
+var renewTokenInterval = 20;
+setInterval(function () {
+  mindsphere.getToken(clientID, clientCredential, bodyObject, function (token) {
+    if (token) {
+      $token = token;
+      mindsphere.getAssetId(token, 'TestAndPacking', function (assetId) {
+        if (assetId) $testAndPackingAssetId = assetId;
+      });
+      mindsphere.getAssetId(token, 'Punching', function (assetId) {
+        if (assetId) $punchingAssetId = assetId;
+      })
+    }
+  });
+}, renewTokenInterval * 60 * 1000);
+
+//Get dashboard data each 10 min
+var dashboardSamplePeriod = 10; //Get data each 10 mins
+setInterval(function () {
+  getAndWriteData($token);
+}, dashboardSamplePeriod * 60 * 1000);
+
+//Read OEE data and write to mongo database at 22:00 everyday
+var now = moment().utcOffset(7).format('YYYY-MM-DD HH:mm:ss');
+var triggerTime = moment('22:30', 'HH:mm');
+if (triggerTime < moment(now)) triggerTime = moment('22:30', 'HH:mm').add(1, 'days'); //If it passes 22:30, this will be triggered next day
+var remainPeriod = triggerTime - moment(now);
+
+
+
+setTimeout(function () {
+  updateOEE();
+  setInterval(function () {
+    updateOEE();
+    //$currentTestAndPacking.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0};
+    //$currentPunching.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0, oilPressure : 0, oilTemp : 0, oilLevel : 0};
+  }, 86400000); //Update OEE next day
+}, remainPeriod);
+
+
+
+io.on('connection', function (socket) {
+
+  //------------------------ SOCKET DASHBOARD -----------------------------------------
+  socket.on('/reqDashboard', function (cmd) {
+    //Product
+    var currentProduct = {
+      testAndPackingAsset: $currentTestAndPacking.data.productCounter,
+      punchingAsset: $currentPunching.data.productCounter
+    }
+    socket.emit('/resDashboard', currentProduct, 'product');
+
+    async.series([
+      function (callback) {
+        //Today
+        dashboardModel.getTodayData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+          socket.emit('/resDashboard', data, 'today');
+          callback();
+        })
+      },
+      function (callback) {
+        //Current week
+        dashboardModel.getWeekData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+          socket.emit('/resDashboard', data, 'week');
+          callback();
+        });
+      },
+      function (callback) {
+        //Current month
+        dashboardModel.getMonthData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+          socket.emit('/resDashboard', data, 'month');
+          callback();
+        });
+      },
+      function (callback) {
+        //Current quarter
+        dashboardModel.getQuarterData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+          socket.emit('/resDashboard', data, 'quarter');
+          callback();
+        });
+      },
+      function (callback) {
+        //Current year
+        dashboardModel.getYearData(dashboardModel.testAndPackingAssetModel, dashboardModel.punchingAssetModel, function (data) {
+          socket.emit('/resDashboard', data, 'year');
+          callback();
+        });
+      }
+    ])
+  });
+
+  emitter.on('/realtime', function (receiveData) {
+    socket.emit('/dashboard/realtime', receiveData);
+  });
+
+
+
+  //------------------------ SOCKET PLANNING -------------------------------------------
+  socket.on('/newPlanning', function (data) {
+    var mongooseModel;
+    if (data.asset == 'testAndPackingAsset') mongooseModel = planningModel.tePaPlanningModel;
+    else mongooseModel = planningModel.punchingPlanningModel;
+
+    var weekIndex = 0;
+
+    async.whilst(
+      //Check condition
+      function () {
+        return weekIndex < data.week.length;
+      },
+      //Task 
+      function (callback) {
+        mongooseModel.findOne({ 'week': data.week[weekIndex], 'interval': data.interval }, function (err, found) {
+          if (found) { //Found week, check and update data
+            for (var item in data.mode) {
+              for (var i = 0; i < data.mode[item].length; i++) {
+                planningModel.checkExistingItem(mongooseModel, {
+                  week: data.week[weekIndex],
+                  date: moment(data.week[weekIndex]).isoWeekday(data.mode[item][i].date).format('YYYY-MM-DD'),
+                  startTime: data.mode[item][i].startTime,
+                  stopTime: data.mode[item][i].stopTime,
+                  mode: data.mode[item][i].mode
+                }, function (result, _mode) {
+                  if (result) {
+                    result.mode = _mode;
+                    result.save();
+                    //console.log(result);
+                  }
+                });
+              }
+            }
+            weekIndex = weekIndex + 1;
+            callback();
+          } else {
+            //mongooseModel.deleteMany({ 'week': _week }, function (err) { console.log('Removed') });
+            planningModel.createNewPlan(data, data.week[weekIndex]);
+            weekIndex = weekIndex + 1;
+            callback();
+          }
+        });
+      }
+    )
+
+
+
+    // var _week;
+    // while(weekIndex < data.week.length) {
+    //   async.series([
+
+    //     //Get week name
+    //     function(callback) {
+    //       _week = data.week[weekIndex];
+    //       console.log(_week)
+    //       callback();
+    //     },
+
+    //     //Check if existing
+    //     function(callback) {
+    //       mongooseModel.findOne({ 'week': _week, 'interval': data.interval }, function (err, found) {
+    //         if (found) { //Found week, check and update data
+    //           for (var item in data.mode) {
+    //             for (var i = 0; i < data.mode[item].length; i++) {
+    //               planningModel.checkExistingItem(mongooseModel, {
+    //                 week: _week,
+    //                 date: moment(_week).isoWeekday(data.mode[item][i].date).format('YYYY-MM-DD'),
+    //                 startTime: data.mode[item][i].startTime,
+    //                 stopTime: data.mode[item][i].stopTime,
+    //                 mode: data.mode[item][i].mode
+    //               }, function (result, _mode) {
+    //                 if (result) {
+    //                   result.mode = _mode;
+    //                   result.save();
+    //                   //console.log(result);
+    //                 }
+    //               });
+    //             }
+    //           }
+    //           weekIndex = weekIndex+1;
+    //           callback();
+    //         } else {
+    //           //mongooseModel.deleteMany({ 'week': _week }, function (err) { console.log('Removed') });
+    //           planningModel.createNewPlan(data , _week); 
+    //           weekIndex = weekIndex+1;
+    //           callback();
+    //         }
+    //       });
+    //     },
+    //     function(callback) {
+    //       //weekIndex = weekIndex+1;
+    //       callback();
+    //     }
+    //   ])
+
+
+    // }
+
+  });
+
+  socket.on('/reqPlanning', function (reqData) {
+    console.log(reqData);
+    var mongooseModel;
+    if (reqData.asset == 'testAndPackingAsset') mongooseModel = planningModel.tePaPlanningModel;
+    else mongooseModel = planningModel.punchingPlanningModel;
+    planningModel.getPlanData(reqData.week, mongooseModel, reqData.asset, function (data) {
+      socket.emit('/resPlanning', data);
+    })
+  })
+
+  //------------------------ SOCKET OEE -------------------------------------------
+  socket.on('/reqOee', function (data) {
+    oeeModel.getData(oeeModel.tePaModel, oeeModel.punchingModel, function (result) {
+      //console.log('Result from mongo: ');
+      //console.log(JSON.stringify(result, null, 4));
+      oeeModel.tePaModel.findOne({ date: moment().utcOffset(7).format('YYYY-MM-DD'), type: 'day' }, function (err, dayResult) {
+        //console.log('Day result');
+        //console.log(dayResult);
+
+        if (err) console.log(err);
+        else if (!dayResult) {
+          console.log('Cannot find date')
+          async.parallel([
+            function (callback) {
+              mindsphere.getLatestData($token, $testAndPackingAssetId, 'Factory_OEE', function (data) {
+                if (data && (moment(data._time).utcOffset(7).format('YYYY-MM-DD') == moment().utcOffset(7).format('YYYY-MM-DD'))) {
+                  // console.log('TePa latest data');
+                  // console.log(data);
+                  //result.testAndPackingAsset.today = calculateCurrentOEE(data, 'testAndPackingAsset');
+                  calculateCurrentOEE(data, 'testAndPackingAsset', function (oeeObj) {
+                    // console.log(oeeObj);
+                    result.testAndPackingAsset.today = oeeObj;
+                    callback();
+                  });
+                } else callback();
+
+              })
+            },
+            function (callback) {
+              mindsphere.getLatestData($token, $punchingAssetId, 'Factory_OEE', function (data) {
+                if (data && (moment(data._time).utcOffset(7).format('YYYY-MM-DD') == moment().utcOffset(7).format('YYYY-MM-DD'))) {
+                  // console.log('Punc latest data');
+                  // console.log(data);
+                  // result.punchingAsset.today = calculateCurrentOEE(data, 'punchingAsset');
+                  calculateCurrentOEE(data, 'punchingAsset', function (oeeObj) {
+                    console.log('Current OEE');
+                    console.log(oeeObj);
+                    result.punchingAsset.today = oeeObj;
+                    callback();
+                  });
+                } else callback();
+              })
+            }
+
+          ], function (err) {
+            console.log('Result from mindsphere');
+            // console.log(result);
+            socket.emit('/resOee', result);
+          })
+        } else socket.emit('/resOee', result);
+      })
+    });
+  });
+
+})
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+
+//------------------------ FUNCTIONS -------------------------------------------
+
+//Get data from mindsphere and write to mongo database if new data
+function getAndWriteData(token) {
+  //Test and packing
+  mindsphere.getLatestData(token, $testAndPackingAssetId, 'Factory_TestAndPacking', function (data) {
+    console.log(data);
+    if (data) {
+      if (data._time != $currentTestAndPacking.timestamp) { //New data
+        $currentTestAndPacking.timestamp = data._time;
+
+        if (data.hasOwnProperty('ProductCounter') && data.hasOwnProperty('CabinetTemp') && data.hasOwnProperty('CabinetHumidity')) {
+          if ((data.ProductCounter != $currentTestAndPacking.data.productCounter) || (data.CabinetTemp != $currentTestAndPacking.data.cabinetTemp) || (data.CabinetHumidity != $currentTestAndPacking.data.cabinetHumidity)) {
+
+            $currentTestAndPacking.data.productCounter = data.ProductCounter;
+            $currentTestAndPacking.data.cabinetTemp = data.CabinetTemp;
+            $currentTestAndPacking.data.cabinetHumidity = data.CabinetHumidity;
+
+            var newModel1 = new dashboardModel.testAndPackingAssetModel({
+              name: 'cabinetTemp',
+              value: $currentTestAndPacking.data.cabinetTemp,
+              unit: 'oC',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel1);
+
+            var newModel2 = new dashboardModel.testAndPackingAssetModel({
+              name: 'cabinetHumidity',
+              value: $currentTestAndPacking.data.cabinetHumidity,
+              unit: '%',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel2);
+
+            var newModel3 = new dashboardModel.testAndPackingAssetModel({
+              name: 'productCounter',
+              value: $currentTestAndPacking.data.productCounter,
+              unit: 'product',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel3);
+
+            emitter.emit('/realtime', { asset: 'testAndPackingAsset', date: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss'), value: data })
+          }
+        }
+
+        // $currentTestAndPacking.data = data;
+        // if (data.hasOwnProperty('ProductCounter')) $currentTestAndPacking.data.productCounter = data.ProductCounter;
+        // if (data.hasOwnProperty('CabinetTemp')) $currentTestAndPacking.data.cabinetTemp = data.CabinetTemp;
+        // if (data.hasOwnProperty('CabinetHumidity')) $currentTestAndPacking.data.cabinetHumidity = data.CabinetHumidity;
+
+        // var newModel1 = new dashboardModel.testAndPackingAssetModel({
+        //   name: 'cabinetTemp',
+        //   value: $currentTestAndPacking.data.cabinetTemp,
+        //   unit: 'oC',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel1);
+
+        // var newModel2 = new dashboardModel.testAndPackingAssetModel({
+        //   name: 'cabinetHumidity',
+        //   value: $currentTestAndPacking.data.cabinetHumidity,
+        //   unit: '%',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel2);
+
+        // var newModel3 = new dashboardModel.testAndPackingAssetModel({
+        //   name: 'productCounter',
+        //   value: $currentTestAndPacking.data.productCounter,
+        //   unit: 'product',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel3);
+
+        //emitter.emit('/realtime', {asset : 'testAndPackingAsset' ,date : moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss'), value : data})
+      }
+    }
+  });
+
+  //Punching
+  mindsphere.getLatestData(token, $punchingAssetId, 'Factory_Punching', function (data) {
+    console.log(data);
+    if (data) {
+      if (data._time != $currentPunching.timestamp) { //New data
+        $currentPunching.timestamp = data._time;
+
+        if (data.hasOwnProperty('ProductCounter') && data.hasOwnProperty('CabinetTemp') && data.hasOwnProperty('CabinetHumidity') && data.hasOwnProperty('OilPressure') && data.hasOwnProperty('OilTemp') && data.hasOwnProperty('OilLevel')) {
+          if ((data.ProductCounter != $currentPunching.data.productCounter) || (data.CabinetTemp != $currentPunching.data.cabinetTemp) || (data.CabinetHumidity != $currentPunching.data.cabinetHumidity) || (data.OilPressure != $currentPunching.data.oilPressure) || (data.OilTemp != $currentPunching.data.oilTemp) || (data.OilLevel != $currentPunching.data.oilLevel)) {
+
+            $currentPunching.data.productCounter = data.ProductCounter;
+            $currentPunching.data.cabinetTemp = data.CabinetTemp;
+            $currentPunching.data.cabinetHumidity = data.CabinetHumidity;
+            $currentPunching.data.oilPressure = data.OilPressure;
+            $currentPunching.data.oilTemp = data.OilTemp;
+            $currentPunching.data.oilLevel = data.OilLevel;
+
+            var newModel1 = new dashboardModel.punchingAssetModel({
+              name: 'cabinetTemp',
+              value: $currentPunching.data.cabinetTemp,
+              unit: 'oC',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel1);
+
+            var newModel2 = new dashboardModel.punchingAssetModel({
+              name: 'cabinetHumidity',
+              value: $currentPunching.data.cabinetHumidity,
+              unit: '%',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel2);
+
+            var newModel3 = new dashboardModel.punchingAssetModel({
+              name: 'oilPressure',
+              value: $currentPunching.data.oilPressure,
+              unit: 'BAR',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel3);
+
+            var newModel4 = new dashboardModel.punchingAssetModel({
+              name: 'oilTemp',
+              value: $currentPunching.data.oilTemp,
+              unit: 'oC',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel4);
+
+            var newModel5 = new dashboardModel.punchingAssetModel({
+              name: 'oilLevel',
+              value: $currentPunching.data.oilLevel,
+              unit: 'HI_LO',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel5);
+
+            var newModel6 = new dashboardModel.punchingAssetModel({
+              name: 'productCounter',
+              value: $currentPunching.data.productCounter,
+              unit: 'product',
+              timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            });
+            dashboardModel.createNewData(newModel6);
+
+            emitter.emit('/realtime', { asset: 'punchingAsset', date: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss'), value: data })
+          }
+        }
+
+
+        //$currentPunching.data = data;
+        // if (data.hasOwnProperty('ProductCounter')) $currentPunching.data.productCounter = data.ProductCounter;
+        // if (data.hasOwnProperty('CabinetTemp')) $currentPunching.data.cabinetTemp = data.CabinetTemp;
+        // if (data.hasOwnProperty('CabinetHumidity')) $currentPunching.data.cabinetHumidity = data.CabinetHumidity;
+        // if (data.hasOwnProperty('OilPressure')) $currentPunching.data.oilPressure = data.OilPressure;
+        // if (data.hasOwnProperty('OilTemp')) $currentPunching.data.oilTemp = data.OilTemp;
+        // if (data.hasOwnProperty('OilLevel')) $currentPunching.data.oilLevel = data.OilLevel;
+
+
+        // var newModel1 = new dashboardModel.punchingAssetModel({
+        //   name: 'cabinetTemp',
+        //   value: $currentPunching.data.cabinetTemp,
+        //   unit: 'oC',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel1);
+
+        // var newModel2 = new dashboardModel.punchingAssetModel({
+        //   name: 'cabinetHumidity',
+        //   value: $currentPunching.data.cabinetHumidity,
+        //   unit: '%',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel2);
+
+        // var newModel3 = new dashboardModel.punchingAssetModel({
+        //   name: 'oilPressure',
+        //   value: $currentPunching.data.oilPressure,
+        //   unit: 'BAR',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel3);
+
+        // var newModel4 = new dashboardModel.punchingAssetModel({
+        //   name: 'oilTemp',
+        //   value: $currentPunching.data.oilTemp,
+        //   unit: 'oC',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel4);
+
+        // var newModel5 = new dashboardModel.punchingAssetModel({
+        //   name: 'oilLevel',
+        //   value: $currentPunching.data.oilLevel,
+        //   unit: 'HI_LO',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel5);
+
+        // var newModel6 = new dashboardModel.punchingAssetModel({
+        //   name: 'productCounter',
+        //   value: $currentPunching.data.productCounter,
+        //   unit: 'product',
+        //   timestamp: moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+        // });
+        // dashboardModel.createNewData(newModel6);
+
+        // emitter.emit('/realtime', {asset : 'punchingAsset' ,date : moment(data._time).utcOffset(7).format('YYYY-MM-DD HH:mm:ss'), value : data})
+      }
+    }
+  });
+}
+
+
+function updateOEE() {
+  mindsphere.getLatestData($token, $testAndPackingAssetId, 'Factory_OEE', function (result) {
+    console.log(result)
+    if (result) {
+      async.series([
+        function (callback) {
+          oeeModel.todayOEE(result, 'testAndPackingAsset');
+          callback();
+        },
+      ], function (err, result) {
+        if (err) console.log(err);
+        else {
+          oeeModel.longPeriodOEE(oeeModel.tePaOeeParamModel, 'testAndPackingAsset', 'week');
+          oeeModel.longPeriodOEE(oeeModel.tePaOeeParamModel, 'testAndPackingAsset', 'month');
+          oeeModel.longPeriodOEE(oeeModel.tePaOeeParamModel, 'testAndPackingAsset', 'quarter');
+          oeeModel.longPeriodOEE(oeeModel.tePaOeeParamModel, 'testAndPackingAsset', 'year');
+        }
+      })
+    }
+  });
+
+  mindsphere.getLatestData($token, $punchingAssetId, 'Factory_OEE', function (result) {
+    console.log(result);
+    if (result) {
+      async.series([
+        function (callback) {
+          oeeModel.todayOEE(result, 'punchingAsset');
+          callback();
+        },
+      ], function (err, result) {
+        if (err) console.log(err);
+        else {
+          oeeModel.longPeriodOEE(oeeModel.punchingOeeParamModel, 'punchingAsset', 'week');
+          oeeModel.longPeriodOEE(oeeModel.punchingOeeParamModel, 'punchingAsset', 'month');
+          oeeModel.longPeriodOEE(oeeModel.punchingOeeParamModel, 'punchingAsset', 'quarter');
+          oeeModel.longPeriodOEE(oeeModel.punchingOeeParamModel, 'punchingAsset', 'year');
+        }
+      })
+    }
+  });
+
+}
+
+//Only apply for today OEE data
+function calculateCurrentOEE(mindsphereData, assetName, callback) {
+  console.log('Mindsphere data');
+  console.log(mindsphereData);
+
+  var mongooseModel;
+  if (assetName == 'testAndPackingAsset') mongooseModel = planningModel.tePaPlanningModel;
+  else mongooseModel = planningModel.punchingPlanningModel;
+
+  planningModel.getPlanningPeriod('day', mongooseModel, assetName, function (planningObject) {
+    console.log('Planning object');
+    console.log(planningObject);
+    var plannedWorkingTime = planningObject.data.workTime;
+    var productiveTime = mindsphereData.Runtime + mindsphereData.CircleCounter * $fixedPrepareTime;
+    var goodProduct = mindsphereData.ProductCounter - mindsphereData.FailProduct;
+    var totalProduct = mindsphereData.ProductCounter;
+    var realRunningTime = productiveTime + mindsphereData.PrepareTime + mindsphereData.MaintenanceTime + mindsphereData.RepairTime;
+
+    var oeeObject = oeeModel.calculateOEE({
+      plannedWorkingTime: plannedWorkingTime,
+      productiveTime: productiveTime,
+      goodProduct: goodProduct,
+      totalProduct: totalProduct,
+      realRunningTime: realRunningTime
+    });
+
+    console.log("OEE value");
+    console.log(oeeObject);
+
+    callback({
+      oee: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.oee }],
+      availability: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.availability }],
+      performance: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.performance }],
+      quality: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.quality }],
+    })
+  });
+}

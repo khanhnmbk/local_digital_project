@@ -1,0 +1,304 @@
+body {
+    background-image: url('/images/GradientBackground_V2.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.nav{
+    min-height: 40px;
+    background: black;
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px 2px;
+}
+
+body {
+  overflow: auto;
+    height: 100%;
+}
+
+/* Style the navigation bar */
+.navbar {
+    width: 100%;
+    background-color: #555;
+    overflow: auto;
+  }
+  
+
+  
+  /* Navbar links on mouse-over */
+  .navbar a:hover {
+    background-color: #000;
+  }
+
+  .nav-title{
+    color : white;
+    font-size: 30px;
+  }
+
+  .nav-title:hover {
+      text-decoration: none;
+      color:#00cebc !important;
+  }
+  
+  
+  
+  /* Add responsiveness - will automatically display the navbar vertically instead of horizontally on screens less than 500 pixels */
+  @media screen and (max-width: 500px) {
+    .navbar a {
+      float: none;
+      display: block;
+    }
+  }
+
+.nav-title{
+  color : white;
+  
+}
+
+.rounded-circle {
+    width: 48px;
+    height: 48px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+i {
+    font-size: 22px;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    color: #0098a3
+}
+
+.nav-item {
+    display: inline-block;
+}
+
+.nav-link {
+    padding: 0.5rem 0.5rem;
+}
+
+.div-border {
+    border-radius: 10px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: #05a993;
+  width: 100%;  /*Tested and working as expected: */
+  padding-top: 1%;
+  margin: 0px auto;
+  float: none;
+}
+
+
+  /* *************************************************
+  /*                  PLANNING TAB
+  /* ************************************************* */
+
+.plan-tabs {
+    background: none;
+    border : 0px;
+}
+
+.plan-tabs a{
+    color : #39acb4;
+}
+
+.plan-tabs a.active {
+    background: #39acb4;
+    color : white;
+}
+
+a.active  { background: rgb(255, 255, 255) !important;} 
+
+.btn-mode{
+  min-width: 120px;
+}
+
+
+  /* *************************************************
+  /*                  CUSTOM RADIO
+  /* ************************************************* */
+
+.label-radio {
+  display: inline-block;
+  /* width: 00px; */
+  /* height: 60px; */
+  width: 130px;
+  border: solid 2px #39acb4;
+  border-left: 0px;
+  /* border-radius: 30px; */
+  /* font-size: 18px; */
+  padding: 5px;
+  margin: auto;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.label-radio:hover {
+    background: rgba(94, 206, 206, 0.5);
+}
+
+.input-radio {
+  display: none;
+}
+
+.input-radio:checked + label {
+  /* border: solid 2px #41aaaa; */
+  background: #39acb4;
+}
+
+.label-first{
+    border-left : solid 2px #39acb4;
+}
+
+
+  /* *************************************************
+  /*                  TABLE
+  /* ************************************************* */
+
+.table td {
+  padding: 0px;
+  border: 1px solid gray;
+  width: 80px;
+  height: 40px;
+  vertical-align: middle
+}
+
+table.table-60 td{
+  height: 40px;
+}
+
+
+table.table-30 td {
+  height: 35px;
+}
+
+table.table-15 td {
+ height: 30px;
+}
+
+td.selected {
+background-color: rgba(121, 121, 121, 1); 
+opacity: 0.4 !important;
+}
+
+td:hover {
+  background: rgba(121, 121, 121, 0.3);
+  /* cursor: pointer; */
+
+}
+
+table.table-bordered{
+  border:1px solid rgb(85, 85, 85);
+}
+table.table-bordered > thead > tr > th{
+  border:1px solid rgb(85, 85, 85);
+}
+table.table-bordered > tbody > tr > td{
+  border:1px solid rgb(85, 85, 85);
+}
+
+.table-wrapper {
+  height: 700px;
+  overflow: auto;
+}
+
+.applied-table-wrapper {
+  height: 700px;
+  overflow: auto;
+}
+
+/*
+***********************************************************************************************
+                                Spinner modal
+***********************************************************************************************
+*/
+
+.bd-example-modal-lg .modal-dialog{
+  display: table;
+  position: relative;
+  margin: 0 auto;
+  top: calc(50% - 24px);
+}
+
+.bd-example-modal-lg .modal-dialog .modal-content{
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+
+/*
+***********************************************************************************************
+                              Success modal
+***********************************************************************************************
+*/
+
+
+/*--thank you pop starts here--*/
+.thank-you-pop{
+width:100%;
+ padding:20px;
+text-align:center;
+}
+.thank-you-pop img{
+width:76px;
+height:auto;
+margin:0 auto;
+display:block;
+margin-bottom:25px;
+}
+
+.thank-you-pop h1{
+font-size: 42px;
+  margin-bottom: 25px;
+color:#5C5C5C;
+}
+.thank-you-pop p{
+font-size: 20px;
+  margin-bottom: 27px;
+ color:#5C5C5C;
+}
+.thank-you-pop h3.cupon-pop{
+font-size: 25px;
+  margin-bottom: 40px;
+color:#222;
+display:inline-block;
+text-align:center;
+padding:10px 20px;
+border:2px dashed #222;
+clear:both;
+font-weight:normal;
+}
+.thank-you-pop h3.cupon-pop span{
+color:#03A9F4;
+}
+.thank-you-pop a{
+display: inline-block;
+  margin: 0 auto;
+  padding: 9px 20px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 14px;
+  background-color: #8BC34A;
+  border-radius: 17px;
+}
+.thank-you-pop a i{
+margin-right:5px;
+color:#fff;
+}
+#ignismyModal .modal-header{
+  border:0px;
+}
+/*--thank you pop ends here--*/
+
+/* Repeat */
+.custom-control-label:hover {
+  cursor: pointer;
+}
+
+/* Navigation color */
+.my-nav{
+  background: #001312;
+}
