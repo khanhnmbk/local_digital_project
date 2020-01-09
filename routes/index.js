@@ -36,23 +36,23 @@ router.get('/oee/:asset/report/:mode', function(req, res, next) {
   
   switch(req.params.mode) {
     case 'week' : {
-      startDate = moment().utcOffset(7).startOf('isoWeek').format('YYYY-MM-DD');
-      endDate = moment().utcOffset(7).endOf('isoWeek').format('YYYY-MM-DD');
+      startDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
+      endDate = moment().endOf('isoWeek').format('YYYY-MM-DD');
       break;
     };
     case 'month' : {
-      startDate = moment().utcOffset(7).startOf('month').format('YYYY-MM-DD');
-      endDate = moment().utcOffset(7).endOf('month').format('YYYY-MM-DD');
+      startDate = moment().startOf('month').format('YYYY-MM-DD');
+      endDate = moment().endOf('month').format('YYYY-MM-DD');
       break;
     };
     case 'quarter' : {
-      startDate = moment().utcOffset(7).startOf('quarter').format('YYYY-MM-DD');
-      endDate = moment().utcOffset(7).endOf('quarter').format('YYYY-MM-DD');
+      startDate = moment().startOf('quarter').format('YYYY-MM-DD');
+      endDate = moment().endOf('quarter').format('YYYY-MM-DD');
       break;
     };
     case 'year' : {
-      startDate = moment().utcOffset(7).startOf('year').format('YYYY-MM-DD');
-      endDate = moment().utcOffset(7).endOf('year').format('YYYY-MM-DD');
+      startDate = moment().startOf('year').format('YYYY-MM-DD');
+      endDate = moment().endOf('year').format('YYYY-MM-DD');
       break;
     };
   }

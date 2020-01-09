@@ -14,10 +14,12 @@ var planningModel = require('../model/planning-data');
 var oeeModel = require('../model/oee-data');
 var async = require('async');
 var s7node = require('../model/s7_module');
+var fs = require('fs');
+var excel = require('../model/excel');
 
 var moment = require('moment');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/SimulationDB2', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/SimulationDB3', { useNewUrlParser: true });
 
 var $testAndPackingAssetId, $punchingAssetId, $token;
 var $currentTestAndPacking = { data: { productCounter: 0, cabinetTemp: 30, cabinetHumidity: 70 }, timestamp: null };
@@ -26,7 +28,7 @@ var $fixedPrepareTime = 0.5;
 
 let $tepa_plc_object = {
   name : "TestAndPacking",
-  address : "192.168.1.150",
+  address : "192.168.1.21",
   port : 102,
   rack : 0,
   slot : 1,
@@ -35,7 +37,7 @@ let $tepa_plc_object = {
 
 let $punch_plc_object = {
   name : "Punching",
-  address : "192.168.1.151",
+  address : "192.168.1.20",
   port : 102,
   rack : 0,
   slot : 1,
@@ -155,7 +157,7 @@ async.series([
   },
   function (callback) {
     console.log('Start getting and writing data');
-    getAndWriteData($token);
+    getAndWriteData();
     //updateOEE();
     callback();
   }
@@ -165,40 +167,58 @@ async.series([
 
 //------------------------ SET INTERVAL -----------------------------------------
 
-//Renew token after 20 mins
-var renewTokenInterval = 20;
-setInterval(function () {
-  mindsphere.getToken(clientID, clientCredential, bodyObject, function (token) {
-    if (token) {
-      $token = token;
-      mindsphere.getAssetId(token, 'TestAndPacking', function (assetId) {
-        if (assetId) $testAndPackingAssetId = assetId;
-      });
-      mindsphere.getAssetId(token, 'Punching', function (assetId) {
-        if (assetId) $punchingAssetId = assetId;
-      })
-    }
-  });
-}, renewTokenInterval * 60 * 1000);
-
 //Get dashboard data each 10 min
-var dashboardSamplePeriod = 10; //Get data each 10 mins
+var dashboardSamplePeriod = 5; //Get data each 10 mins
 setInterval(function () {
-  getAndWriteData($token);
+  getAndWriteData();
 }, dashboardSamplePeriod * 60 * 1000);
 
 //Read OEE data and write to mongo database at 22:00 everyday
-var now = moment().utcOffset(7).format('YYYY-MM-DD HH:mm:ss');
+var now = moment().format('YYYY-MM-DD HH:mm:ss');
+//var triggerTime = moment('23:00', 'HH:mm');
+//if (triggerTime < moment(now)) triggerTime = moment('23:00', 'HH:mm').add(1, 'days'); //If it passes 22:30, this will be triggered next day
 var triggerTime = moment('22:30', 'HH:mm');
 if (triggerTime < moment(now)) triggerTime = moment('22:30', 'HH:mm').add(1, 'days'); //If it passes 22:30, this will be triggered next day
 var remainPeriod = triggerTime - moment(now);
 
-
-
 setTimeout(function () {
-  updateOEE();
+  async.series([
+    function(callback) {
+      console.log('Update OEE');
+      updateOEE();
+      callback();
+    },
+    function (callback) {
+      console.log('Write data to excel');
+      write_data_to_excel('testAndPacking', 'month');
+      callback();
+    },
+    function(callback) {
+      write_data_to_excel('punching', 'month');
+      callback();
+    }
+  ], function(err) {
+    if (err) console.log(err);
+  })
   setInterval(function () {
-    updateOEE();
+    async.series([
+      function(callback) {
+        console.log('Update OEE');
+        updateOEE();
+        callback();
+      },
+      function (callback) {
+        console.log('Write data to excel');
+        write_data_to_excel('testAndPacking', 'month');
+        callback();
+      },
+      function(callback) {
+        write_data_to_excel('punching', 'month');
+        callback();
+      }
+    ], function(err) {
+      if (err) console.log(err);
+    })
     //$currentTestAndPacking.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0};
     //$currentPunching.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0, oilPressure : 0, oilTemp : 0, oilLevel : 0};
   }, 86400000); //Update OEE next day
@@ -321,7 +341,7 @@ io.on('connection', function (socket) {
   //------------------------ SOCKET OEE -------------------------------------------
 socket.on('/reqOee', function (data) {
     oeeModel.getData(oeeModel.tePaModel, oeeModel.punchingModel, function (result) {
-      oeeModel.tePaModel.findOne({ date: moment().utcOffset(7).format('YYYY-MM-DD'), type: 'day' }, function (err, dayResult) {
+      oeeModel.tePaModel.findOne({ date: moment().format('YYYY-MM-DD'), type: 'day' }, function (err, dayResult) {
         if (err) console.log(err);
         else if (!dayResult) {
           console.log('Cannot find date')
@@ -479,18 +499,18 @@ function calculateCurrentOEE(mindsphereData, assetName, callback) {
     console.log(oeeObject);
 
     callback({
-      oee: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.oee }],
-      availability: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.availability }],
-      performance: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.performance }],
-      quality: [{ date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject.quality }],
+      oee: [{ date: moment().format('YYYY-MM-DD'), value: oeeObject.oee }],
+      availability: [{ date: moment().format('YYYY-MM-DD'), value: oeeObject.availability }],
+      performance: [{ date: moment().format('YYYY-MM-DD'), value: oeeObject.performance }],
+      quality: [{ date: moment().format('YYYY-MM-DD'), value: oeeObject.quality }],
     })
   });
 }
 
 //Read values from PLC and format to object TestAndPacking  = {data : {'ProductCounter' : 200 ...}, timestamp : _time}
-function getAndWriteData(s7_node)
+function getAndWriteData()
 {
-  var timestamp = moment().utcOffset(7).format('YYYY-MM-DD HH:mm:ss');
+  var timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
   s7node.readAllData ($tepa_plc_object.s7_node, function (result) {
     if (result)
     {
@@ -625,4 +645,97 @@ function getAndWriteData(s7_node)
       }
     }
   })
+}
+
+//Write oee data to excel
+function write_data_to_excel (asset, mode)
+{
+  var startDate, endDate;
+  var sampleFile = './excel/SampleFormat.xlsx';
+  var destFile = './excel/Report.xlsx';
+  var sampleFileWithMacro = './excel/SampleFormat.xlsm';
+  var destFileWithMacro = './excel/Report.xlsm';
+  let destination = 'D:/OEE_Report/';
+  var report_title;
+  
+  switch(mode) {
+    case 'week' : {
+      startDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
+      endDate = moment().endOf('isoWeek').format('YYYY-MM-DD');
+      break;
+    };
+    case 'month' : {
+      startDate = moment().startOf('month').format('YYYY-MM-DD');
+      endDate = moment().endOf('month').format('YYYY-MM-DD');
+      break;
+    };
+    case 'quarter' : {
+      startDate = moment().startOf('quarter').format('YYYY-MM-DD');
+      endDate = moment().endOf('quarter').format('YYYY-MM-DD');
+      break;
+    };
+    case 'year' : {
+      startDate = moment().startOf('year').format('YYYY-MM-DD');
+      endDate = moment().endOf('year').format('YYYY-MM-DD');
+      break;
+    };
+  }
+  report_title = destination + moment().format('YYYY_MM_DD_') + asset + '_report.xlsm';
+
+  if (asset == 'punching') {
+    oeeModel.punchingOeeParamModel.find({date : {$gte : startDate, $lte : endDate}} , function(err, result) {
+      if(err) console.log(err);
+      else {
+        var title = excel.generateTitle(mode , 'punchingAsset');
+        excel.createReport(sampleFile, destFile, title , result, function(status) {
+          if (status) {
+            excel.modifyReport(destFile, sampleFileWithMacro, destFileWithMacro, function(result) {
+              if (result) fs.rename(destFileWithMacro, report_title, function() {});
+            });
+
+            // async.series([
+            //   function(callback) {
+            //     var wbReport = excelMacro.readFile(destFile);
+            //     var wbMacro = excelMacro.readFile(sampleFileWithMacro , {bookVBA : true});
+            //     wbMacro.Sheets["Sheet1"] = wbReport.Sheets["Sheet1"];
+            //     excelMacro.writeFile(wbMacro, destFileWithMacro, {bookVBA : true});
+            //     callback();
+            //   },
+            //   function(callback) {
+            //     res.download(destFileWithMacro);
+            //     callback();
+            //   }
+            // ])
+          }
+        });
+      }
+    });
+  } else {  //Test and packing
+    oeeModel.tePaOeeParamModel.find({date : {$gte : startDate, $lte : endDate}} , function(err, result) {
+      if (err) console.log(err);
+      else {
+        var title = excel.generateTitle(mode, 'testAndPackingAsset');
+        excel.createReport(sampleFile, destFile, title, result, function(status) {
+          if (status) {
+            excel.modifyReport(destFile, sampleFileWithMacro, destFileWithMacro, function(result) {
+              if (result) fs.rename(destFileWithMacro, report_title, function() {});
+            });
+            // async.series([
+            //   function(callback) {
+            //     var wbReport = excelMacro.readFile(destFile);
+            //     var wbMacro = excelMacro.readFile(sampleFileWithMacro , {bookVBA : true});
+            //     wbMacro.Sheets["Sheet1"] = wbReport.Sheets["Sheet1"];
+            //     excelMacro.writeFile(wbMacro, destFileWithMacro, {bookVBA : true});
+            //     callback();
+            //   },
+            //   function(callback) {
+            //     res.download(destFileWithMacro);
+            //     callback();
+            //   }
+            // ])
+          }
+        })
+      }
+    });
+  }
 }

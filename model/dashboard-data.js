@@ -278,7 +278,7 @@ function getData(testAndPackingModel, punchingModel, callback) {
             });
         },
         function (callback_) {
-            getMonth(moment().utcOffset(7).format('YYYY-MM'), testAndPackingModel, 'testAndPackingAsset', dataSchema, function (data) {
+            getMonth(moment().format('YYYY-MM'), testAndPackingModel, 'testAndPackingAsset', dataSchema, function (data) {
                 testAndPackingAsset_currentMonth = JSON.stringify(data, null, 4);
                 callback_();
             });
@@ -310,7 +310,7 @@ function getData(testAndPackingModel, punchingModel, callback) {
             });
         },
         function (callback_) {
-            getMonth(moment().utcOffset(7).format('YYYY-MM'), punchingModel, 'punchingAsset', dataSchema, function (data) {
+            getMonth(moment().format('YYYY-MM'), punchingModel, 'punchingAsset', dataSchema, function (data) {
                 punchingAsset_currentMonth = JSON.stringify(data, null, 4);;
                 callback_();
             });
@@ -354,7 +354,7 @@ function getData(testAndPackingModel, punchingModel, callback) {
 
 //Return today object. REMOVE SUBSTRACT WHEN REAL
 function getToday(mongoModel, assetName, _dataSchema, callback) {
-    var today = moment().utcOffset(7).format('YYYY-MM-DD');
+    var today = moment().format('YYYY-MM-DD');
     mongoModel.find({
         'timestamp': {
             $gte: today,
@@ -399,15 +399,15 @@ function getToday(mongoModel, assetName, _dataSchema, callback) {
 
 //Return current week object
 function getWeek(mongoModel, assetName, _dataSchema, callback) {
-    var startWeek = moment().utcOffset(7).startOf('isoWeek').format('YYYY-MM-DD');
-    var endWeek = moment().utcOffset(7).endOf('isoWeek').add(1,'days').format('YYYY-MM-DD');
+    var startWeek = moment().startOf('isoWeek').format('YYYY-MM-DD');
+    var endWeek = moment().endOf('isoWeek').add(1,'days').format('YYYY-MM-DD');
 
     console.log('Start of week: ' , startWeek);
     console.log('End of week: ', endWeek);
 
     var _arrWeek = [];
     for (var i = 0; i < 7; i++) {
-        _arrWeek.push(moment().utcOffset(7).startOf('isoWeek').add(i, 'days').format('YYYY-MM-DD'));
+        _arrWeek.push(moment().startOf('isoWeek').add(i, 'days').format('YYYY-MM-DD'));
     }
 
     console.log('Array of week: ');
@@ -702,8 +702,8 @@ function getMonth(month, mongoModel, assetName, _dataSchema, callback) {
 
 //Return quarter object
 function getQuarter( mongoModel, assetName, _dataSchema, callback) {
-    var startQuarter = moment().utcOffset(7).startOf('quarter').format('YYYY-MM-DD');
-    var endQuarter = moment().utcOffset(7).endOf('quarter').add(1, 'days').format('YYYY-MM-DD');
+    var startQuarter = moment().startOf('quarter').format('YYYY-MM-DD');
+    var endQuarter = moment().endOf('quarter').add(1, 'days').format('YYYY-MM-DD');
 
     mongoModel.find({
         'timestamp': {
@@ -861,8 +861,8 @@ function getQuarter( mongoModel, assetName, _dataSchema, callback) {
 
 //Return year object
 function getYear( mongoModel, assetName, _dataSchema, callback) {
-    var startYear = moment().utcOffset(7).startOf('year').format('YYYY-MM-DD');
-    var endYear = moment().utcOffset(7).endOf('year').format('YYYY-MM-DD');
+    var startYear = moment().startOf('year').format('YYYY-MM-DD');
+    var endYear = moment().endOf('year').format('YYYY-MM-DD');
 
     mongoModel.find({
         'timestamp': {
@@ -2121,14 +2121,14 @@ function getMonthData(testAndPackingModel, punchingModel, callback) {
     async.parallel([
         //Test and packing
         function(callback_) {
-            getMonth(moment().utcOffset(7).format('YYYY-MM'), testAndPackingModel, 'testAndPackingAsset', dataSchema, function (data) {
+            getMonth(moment().format('YYYY-MM'), testAndPackingModel, 'testAndPackingAsset', dataSchema, function (data) {
                 testAndPackingAsset_currentMonth = JSON.stringify(data, null, 4);
                 callback_();
             });
         },
         //Punching
         function (callback_) {
-            getMonth(moment().utcOffset(7).format('YYYY-MM'), punchingModel, 'punchingAsset', dataSchema, function (data) {
+            getMonth(moment().format('YYYY-MM'), punchingModel, 'punchingAsset', dataSchema, function (data) {
                 punchingAsset_currentMonth = JSON.stringify(data, null, 4);;
                 callback_();
             });

@@ -75,7 +75,7 @@ function createNewData(assetName, data, type) {
             availability: data.value.availability,
             performance: data.value.performance,
             quality: data.value.quality,
-            timestamp: moment().utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            timestamp: moment().format('YYYY-MM-DD HH:mm:ss')
         });
         model.save();
     } else { //Punching asset
@@ -86,7 +86,7 @@ function createNewData(assetName, data, type) {
             availability: data.value.availability,
             performance: data.value.performance,
             quality: data.value.quality,
-            timestamp: moment().utcOffset(7).format('YYYY-MM-DD HH:mm:ss')
+            timestamp: moment().format('YYYY-MM-DD HH:mm:ss')
         });
         model.save();
     }
@@ -107,7 +107,7 @@ function getToday(mongooseModel, callback) {
         performance: [],
         quality: []
     };
-    mongooseModel.findOne({ date: moment().utcOffset(7).format('YYYY-MM-DD'), type: 'day' }, function (err, result) {
+    mongooseModel.findOne({ date: moment().format('YYYY-MM-DD'), type: 'day' }, function (err, result) {
         if (err) console.log(err);
         else if (result) {
             returnObject.oee.push({
@@ -128,7 +128,7 @@ function getToday(mongooseModel, callback) {
             });
             callback(returnObject);
         } else {    //Not found
-            var _date = moment().utcOffset(7).format('YYYY-MM-DD');
+            var _date = moment().format('YYYY-MM-DD');
             returnObject.oee.push({
                 date: _date,
                 value: 0
@@ -152,8 +152,8 @@ function getToday(mongooseModel, callback) {
 
 //Get current week
 function getWeek(mongooseModel, callback) {
-    var startWeek = moment().utcOffset(7).startOf('isoWeek').format('YYYY-MM-DD');
-    var endWeek = moment().utcOffset(7).endOf('isoWeek').format('YYYY-MM-DD');
+    var startWeek = moment().startOf('isoWeek').format('YYYY-MM-DD');
+    var endWeek = moment().endOf('isoWeek').format('YYYY-MM-DD');
     var returnObject = {
         oee: [],
         availability: [],
@@ -195,7 +195,7 @@ function getWeek(mongooseModel, callback) {
         },
         //Find weekly oee value
         function (_callback) {
-            mongooseModel.findOne({ type: 'week', date: moment().utcOffset(7).format(moment.HTML5_FMT.WEEK) }, function (err, result1) {
+            mongooseModel.findOne({ type: 'week', date: moment().format(moment.HTML5_FMT.WEEK) }, function (err, result1) {
                 if (err) console.log(err);
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
@@ -215,8 +215,8 @@ function getWeek(mongooseModel, callback) {
 
 //Get current month 
 function getMonth(mongooseModel, callback) {
-    var startMonth = moment().utcOffset(7).startOf('month').format('YYYY-MM-DD');
-    var endMonth = moment().utcOffset(7).endOf('month').format('YYYY-MM-DD');
+    var startMonth = moment().startOf('month').format('YYYY-MM-DD');
+    var endMonth = moment().endOf('month').format('YYYY-MM-DD');
     var returnObject = {
         oee: [],
         availability: [],
@@ -262,7 +262,7 @@ function getMonth(mongooseModel, callback) {
         },
         //Get monthly oee value
         function (_callback) {
-            mongooseModel.findOne({ type: 'month', date: moment().utcOffset(7).format('YYYY-MM') }, function (err, result1) {
+            mongooseModel.findOne({ type: 'month', date: moment().format('YYYY-MM') }, function (err, result1) {
                 if (err) console.log(err);
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
@@ -282,8 +282,8 @@ function getMonth(mongooseModel, callback) {
 
 //Get current quarter
 function getQuarter(mongooseModel, callback) {
-    var startMonth = moment().utcOffset(7).startOf('quarter').format('YYYY-MM-DD');
-    var endMonth = moment().utcOffset(7).endOf('quarter').format('YYYY-MM-DD');
+    var startMonth = moment().startOf('quarter').format('YYYY-MM-DD');
+    var endMonth = moment().endOf('quarter').format('YYYY-MM-DD');
     console.log(startMonth + ' - ' + endMonth)
     var returnObject = {
         oee: [],
@@ -328,7 +328,7 @@ function getQuarter(mongooseModel, callback) {
         },
         //Get quarterly oee value
         function (_callback) {
-            mongooseModel.findOne({ type: 'quarter', date: moment().utcOffset(7).format('YYYY qQ') }, function (err, result1) {
+            mongooseModel.findOne({ type: 'quarter', date: moment().format('YYYY qQ') }, function (err, result1) {
                 if (err) console.log(err);
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
@@ -348,8 +348,8 @@ function getQuarter(mongooseModel, callback) {
 
 //Get current year
 function getYear(mongooseModel, callback) {
-    var startMonth = moment().utcOffset(7).startOf('year').format('YYYY-MM');
-    var currentMonth = moment().utcOffset(7).format('YYYY-MM');
+    var startMonth = moment().startOf('year').format('YYYY-MM');
+    var currentMonth = moment().format('YYYY-MM');
 
     var returnObject = {
         oee: [],
@@ -392,7 +392,7 @@ function getYear(mongooseModel, callback) {
                 _callback();
             })
         }, function (_callback) { //Get yearly oee value
-            mongooseModel.findOne({ type: 'year', date: moment().utcOffset(7).format('YYYY') }, function (err, result1) {
+            mongooseModel.findOne({ type: 'year', date: moment().format('YYYY') }, function (err, result1) {
                 if (err) console.log(err);
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
@@ -567,7 +567,7 @@ function todayOEE(mindsphereData, assetName) {
             model = punchingOeeParamModel;
         };
         var newModel = new model({
-            date: moment().utcOffset(7).format('YYYY-MM-DD'),
+            date: moment().format('YYYY-MM-DD'),
             plannedWorkingTime :plannedWorkingTime,
             plannedBreakTime : planningObject.data.breakTime,
             realRunningTime : realRunningTime,
@@ -589,7 +589,7 @@ function todayOEE(mindsphereData, assetName) {
             totalProduct: totalProduct,
             realRunningTime: realRunningTime
         });
-        createNewData(assetName, { date: moment().utcOffset(7).format('YYYY-MM-DD'), value: oeeObject }, 'day');
+        createNewData(assetName, { date: moment().format('YYYY-MM-DD'), value: oeeObject }, 'day');
     });
 }
 
@@ -600,23 +600,23 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
     var plannedWorkingTime = 0, productiveTime = 0, realRunningTime = 0, goodProduct = 0, totalProduct = 0;
     //var oeeObject;
     var startTime;
-    var stopTime = moment().add(1,'days').utcOffset(7).format('YYYY-MM-DD');
+    var stopTime = moment().add(1,'days').format('YYYY-MM-DD');
 
     switch (type) {
         case 'week': {
-            startTime = moment().utcOffset(7).startOf('isoWeek').format('YYYY-MM-DD');
+            startTime = moment().startOf('isoWeek').format('YYYY-MM-DD');
             break;
         }
         case 'month': {
-            startTime = moment().utcOffset(7).startOf('month').format('YYYY-MM-DD');
+            startTime = moment().startOf('month').format('YYYY-MM-DD');
             break;
         }
         case 'quarter': {
-            startTime = moment().utcOffset(7).startOf('quarter').format('YYYY-MM-DD');
+            startTime = moment().startOf('quarter').format('YYYY-MM-DD');
             break;
         }
         case 'year': {
-            startTime = moment().utcOffset(7).startOf('year').format('YYYY-MM-DD');
+            startTime = moment().startOf('year').format('YYYY-MM-DD');
             break;
         }
     }
@@ -659,19 +659,19 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
             var _time;
             switch (type) {
                 case 'week': {
-                    _time = moment().utcOffset(7).format(moment.HTML5_FMT.WEEK);
+                    _time = moment().format(moment.HTML5_FMT.WEEK);
                     break;
                 }
                 case 'month': {
-                    _time = moment().utcOffset(7).format('YYYY-MM');
+                    _time = moment().format('YYYY-MM');
                     break;
                 }
                 case 'quarter': {
-                    _time = moment().utcOffset(7).format('YYYY qQ');
+                    _time = moment().format('YYYY qQ');
                     break;
                 }
                 case 'year': {
-                    _time = moment().utcOffset(7).format('YYYY');
+                    _time = moment().format('YYYY');
                     break;
                 }
             }
@@ -684,7 +684,7 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
                         result.availability = oeeObject.availability;
                         result.performance = oeeObject.performance;
                         result.quality = oeeObject.quality;
-                        result.timestamp = moment().utcOffset(7).format('YYYY-MM-DD HH:mm:ss');
+                        result.timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
                         result.save();
                         console.log('Updated data');
                     } else {
@@ -707,19 +707,19 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
             //     var _time;
             //     switch (type) {
             //         case 'week': {
-            //             _time = moment().utcOffset(7).format(moment.HTML5_FMT.WEEK);
+            //             _time = moment().format(moment.HTML5_FMT.WEEK);
             //             break;
             //         }
             //         case 'month': {
-            //             _time = moment().utcOffset(7).format('YYYY-MM');
+            //             _time = moment().format('YYYY-MM');
             //             break;
             //         }
             //         case 'quarter': {
-            //             _time = moment().utcOffset(7).format('YYYY qQ');
+            //             _time = moment().format('YYYY qQ');
             //             break;
             //         }
             //         case 'year': {
-            //             _time = moment().utcOffset(7).format('YYYY');
+            //             _time = moment().format('YYYY');
             //             break;
             //         }
             //     }
@@ -731,7 +731,7 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
             //                 result.availability = oeeObject.availability;
             //                 result.performance = oeeObject.performance;
             //                 result.quality = oeeObject.quality;
-            //                 result.timestamp = moment().utcOffset(7).format('YYYY-MM-DD HH:mm:ss');
+            //                 result.timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
             //                 result.save();
             //                 console.log('Updated data');
             //             } else {

@@ -69,8 +69,8 @@ function getPlan(week, mongooseModel , assetName,  callback) {
         interval : null, 
         mode : {}
     };
-    var startWeek = moment(week).utcOffset(7).startOf('isoWeek').format('YYYY-MM-DD');
-    var endWeek = moment(week).utcOffset(7).endOf('isoWeek').format('YYYY-MM-DD');
+    var startWeek = moment(week).startOf('isoWeek').format('YYYY-MM-DD');
+    var endWeek = moment(week).endOf('isoWeek').format('YYYY-MM-DD');
     mongooseModel.find({
         'date' : {
             $gte: startWeek,
@@ -123,30 +123,30 @@ function getPlanningPeriod(type, mongooseModel, assetName, callback) {
     };
 
     var _startDate = null;
-    var _stopDate =  moment().utcOffset(7).format('YYYY-MM-DD');
+    var _stopDate =  moment().format('YYYY-MM-DD');
     switch(type) {
         case 'day' : {
-            _startDate = moment().utcOffset(7).format('YYYY-MM-DD');
+            _startDate = moment().format('YYYY-MM-DD');
            // _stopDate = _startDate;
             break;
         };
         case 'week' : {
-            _startDate = moment().utcOffset(7).startOf('isoWeek').format('YYYY-MM-DD');
+            _startDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
             //_stopDate = moment().endOf('isoWeek').format('YYYY-MM-DD');
             break;
         }; 
         case 'month' : {
-            _startDate = moment().utcOffset(7).startOf('month').format('YYYY-MM-DD');
+            _startDate = moment().startOf('month').format('YYYY-MM-DD');
             //_stopDate = moment().endOf('month').format('YYYY-MM-DD');
             break;
         }; 
         case 'quarter' : {
-            _startDate = moment().utcOffset(7).startOf('quarter').format('YYYY-MM-DD');
+            _startDate = moment().startOf('quarter').format('YYYY-MM-DD');
            // _stopDate = moment().endOf('quarter').format('YYYY-MM-DD');
             break;
         }; 
         case 'year' : {
-            _startDate = moment().utcOffset(7).startOf('year').format('YYYY-MM-DD');
+            _startDate = moment().startOf('year').format('YYYY-MM-DD');
            // _stopDate = moment().endOf('year').format('YYYY-MM-DD');
             break;
         }; 

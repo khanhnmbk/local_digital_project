@@ -307,19 +307,19 @@ function generateTitle(mode, asset) {
     else title = 'PUNCHING MACHINE: OEE REPORT IN '
     switch (mode.toLowerCase()) {
         case 'week': {
-            title += moment().utcOffset(7).format(moment.HTML5_FMT.WEEK) + ' (' + moment().utcOffset(7).startOf('isoWeek').format('YYYY-MM-DD') + ' to ' + moment().utcOffset(7).endOf('isoWeek').format('YYYY-MM-DD') + ')';
+            title += moment().format(moment.HTML5_FMT.WEEK) + ' (' + moment().startOf('isoWeek').format('YYYY-MM-DD') + ' to ' + moment().endOf('isoWeek').format('YYYY-MM-DD') + ')';
             break;
         }
         case 'month': {
-            title += moment().utcOffset(7).format('MMM YYYY').toUpperCase();
+            title += moment().format('MMM YYYY').toUpperCase();
             break;
         }
         case 'quarter': {
-            title += 'QUARTER ' + moment().utcOffset(7).format('Q YYYY');
+            title += 'QUARTER ' + moment().format('Q YYYY');
             break;
         }
         case 'year': {
-            title += moment().utcOffset(7).format('YYYY');
+            title += moment().format('YYYY');
             break;
         }
     }
