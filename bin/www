@@ -162,7 +162,7 @@ async.series([
     callback();
   }
 ], function (err, result) {
-  if (err) console.log(err);
+  if (err) throw err;
 });
 
 //------------------------ SET INTERVAL -----------------------------------------
@@ -198,7 +198,7 @@ setTimeout(function () {
       callback();
     }
   ], function(err) {
-    if (err) console.log(err);
+    if (err) throw err;
   })
   setInterval(function () {
     async.series([
@@ -217,7 +217,7 @@ setTimeout(function () {
         callback();
       }
     ], function(err) {
-      if (err) console.log(err);
+      if (err) throw err;
     })
     //$currentTestAndPacking.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0};
     //$currentPunching.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0, oilPressure : 0, oilTemp : 0, oilLevel : 0};
@@ -342,7 +342,7 @@ io.on('connection', function (socket) {
 socket.on('/reqOee', function (data) {
     oeeModel.getData(oeeModel.tePaModel, oeeModel.punchingModel, function (result) {
       oeeModel.tePaModel.findOne({ date: moment().format('YYYY-MM-DD'), type: 'day' }, function (err, dayResult) {
-        if (err) console.log(err);
+        if (err) throw err;
         else if (!dayResult) {
           console.log('Cannot find date')
           async.parallel([
@@ -444,7 +444,7 @@ function updateOEE() {
       callback();
     },
   ], function (err, result) {
-    if (err) console.log(err);
+    if (err) throw err;
     else {
       oeeModel.longPeriodOEE(oeeModel.tePaOeeParamModel, 'testAndPackingAsset', 'week');
       oeeModel.longPeriodOEE(oeeModel.tePaOeeParamModel, 'testAndPackingAsset', 'month');
@@ -459,7 +459,7 @@ function updateOEE() {
       callback();
     },
   ], function (err, result) {
-    if (err) console.log(err);
+    if (err) throw err;
     else {
       oeeModel.longPeriodOEE(oeeModel.punchingOeeParamModel, 'punchingAsset', 'week');
       oeeModel.longPeriodOEE(oeeModel.punchingOeeParamModel, 'punchingAsset', 'month');
@@ -684,7 +684,7 @@ function write_data_to_excel (asset, mode)
 
   if (asset == 'punching') {
     oeeModel.punchingOeeParamModel.find({date : {$gte : startDate, $lte : endDate}} , function(err, result) {
-      if(err) console.log(err);
+      if(err) throw err;
       else {
         var title = excel.generateTitle(mode , 'punchingAsset');
         excel.createReport(sampleFile, destFile, title , result, function(status) {
@@ -712,7 +712,7 @@ function write_data_to_excel (asset, mode)
     });
   } else {  //Test and packing
     oeeModel.tePaOeeParamModel.find({date : {$gte : startDate, $lte : endDate}} , function(err, result) {
-      if (err) console.log(err);
+      if (err) throw err;
       else {
         var title = excel.generateTitle(mode, 'testAndPackingAsset');
         excel.createReport(sampleFile, destFile, title, result, function(status) {

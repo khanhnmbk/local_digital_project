@@ -108,7 +108,7 @@ function getToday(mongooseModel, callback) {
         quality: []
     };
     mongooseModel.findOne({ date: moment().format('YYYY-MM-DD'), type: 'day' }, function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else if (result) {
             returnObject.oee.push({
                 date: result.date,
@@ -196,7 +196,7 @@ function getWeek(mongooseModel, callback) {
         //Find weekly oee value
         function (_callback) {
             mongooseModel.findOne({ type: 'week', date: moment().format(moment.HTML5_FMT.WEEK) }, function (err, result1) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
                     returnObject.average.availability = result1.availability;
@@ -207,7 +207,7 @@ function getWeek(mongooseModel, callback) {
             });
         }
     ], function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else callback(returnObject)
     })
 
@@ -234,7 +234,7 @@ function getMonth(mongooseModel, callback) {
         //Get days of week oee value
         function (_callback) {
             mongooseModel.find({ date: { $gte: startMonth, $lte: endMonth }, type: 'day' }, function (err, result) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else {
                     if (result.length > 0) {
                         for (var i = 0; i < result.length; i++) {
@@ -263,7 +263,7 @@ function getMonth(mongooseModel, callback) {
         //Get monthly oee value
         function (_callback) {
             mongooseModel.findOne({ type: 'month', date: moment().format('YYYY-MM') }, function (err, result1) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
                     returnObject.average.availability = result1.availability;
@@ -274,7 +274,7 @@ function getMonth(mongooseModel, callback) {
             });
         }
     ], function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else callback(returnObject);
     })
 
@@ -302,7 +302,7 @@ function getQuarter(mongooseModel, callback) {
         //Get days of quarter oee value
         function (_callback) {
             mongooseModel.find({ type: 'day', date: { $gte: startMonth, $lte: endMonth } }, function (err, result) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
                         returnObject.oee.push({
@@ -329,7 +329,7 @@ function getQuarter(mongooseModel, callback) {
         //Get quarterly oee value
         function (_callback) {
             mongooseModel.findOne({ type: 'quarter', date: moment().format('YYYY qQ') }, function (err, result1) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
                     returnObject.average.availability = result1.availability;
@@ -340,7 +340,7 @@ function getQuarter(mongooseModel, callback) {
             });
         }
     ], function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else callback(returnObject);
     })
 
@@ -368,7 +368,7 @@ function getYear(mongooseModel, callback) {
         //Get months of year oee value
         function (_callback) {
             mongooseModel.find({ type: 'month', date: { $gte: startMonth, $lte: currentMonth } }, function (err, result) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
                         returnObject.oee.push({
@@ -393,7 +393,7 @@ function getYear(mongooseModel, callback) {
             })
         }, function (_callback) { //Get yearly oee value
             mongooseModel.findOne({ type: 'year', date: moment().format('YYYY') }, function (err, result1) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result1) {
                     returnObject.average.oee = result1.oee;
                     returnObject.average.availability = result1.availability;
@@ -404,7 +404,7 @@ function getYear(mongooseModel, callback) {
             });
         }
     ], function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else callback(returnObject);
     })
 
@@ -494,7 +494,7 @@ function getData(tePaModel, punchingModel, callback) {
 
 
     ], function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             callback(returnObject);
         }
@@ -630,7 +630,7 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
     async.series([
         function (_callback) {
             oeeParamModel.find({ date: { $gte: startTime, $lte: stopTime } }, function (err, result) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result.length > 0) {
                     console.log(result);
                     for (var i = 0; i < result.length; i++) {
@@ -677,7 +677,7 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
             }
 
             oeeModel.findOne({ type: type, date: _time }, function (err, result) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else {
                     if (result) {
                         result.oee = oeeObject.oee;
@@ -724,7 +724,7 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
             //         }
             //     }
             //     oeeModel.findOne({ type: type, date: _time }, function (err, result) {
-            //         if (err) console.log(err);
+            //         if (err) throw err;
             //         else {
             //             if (result) {
             //                 result.oee = oeeObject.oee;
