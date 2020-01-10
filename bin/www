@@ -175,19 +175,41 @@ setInterval(function () {
 
 //Read OEE data and write to mongo database at 22:00 everyday
 var now = moment().format('YYYY-MM-DD HH:mm:ss');
-//var triggerTime = moment('23:00', 'HH:mm');
-//if (triggerTime < moment(now)) triggerTime = moment('23:00', 'HH:mm').add(1, 'days'); //If it passes 22:30, this will be triggered next day
-var triggerTime = moment('22:30', 'HH:mm');
-if (triggerTime < moment(now)) triggerTime = moment('22:30', 'HH:mm').add(1, 'days'); //If it passes 22:30, this will be triggered next day
+var triggerTime = moment('13:57', 'HH:mm');
+if (triggerTime < moment(now)) triggerTime = moment('13:57', 'HH:mm').add(1, 'days'); //If it passes 22:30, this will be triggered next day
 var remainPeriod = triggerTime - moment(now);
 
+var update_oee_trigger_time = moment('13:56', 'HH:mm');
+if (update_oee_trigger_time < moment(now)) update_oee_trigger_time = moment('13:56', 'HH:mm').add(1, 'days'); //If it passes 22:20, this will be triggered next day
+var update_oee_remain_period = update_oee_trigger_time - moment(now);
+
+//Set timer for update OEE
 setTimeout(function () {
   async.series([
     function(callback) {
       console.log('Update OEE');
       updateOEE();
       callback();
-    },
+    }
+  ], function(err) {
+    if (err) throw err;
+  })
+  setInterval(function () {
+    async.series([
+      function(callback) {
+        console.log('Update OEE');
+        updateOEE();
+        callback();
+      }
+    ], function(err) {
+      if (err) throw err;
+    })
+  }, 86400000); //Update OEE next day
+}, update_oee_remain_period);
+
+//Set timer for writing to excel
+setTimeout(function () {
+  async.series([
     function (callback) {
       console.log('Write data to excel');
       write_data_to_excel('testAndPacking', 'month');
@@ -202,11 +224,6 @@ setTimeout(function () {
   })
   setInterval(function () {
     async.series([
-      function(callback) {
-        console.log('Update OEE');
-        updateOEE();
-        callback();
-      },
       function (callback) {
         console.log('Write data to excel');
         write_data_to_excel('testAndPacking', 'month');
@@ -219,12 +236,8 @@ setTimeout(function () {
     ], function(err) {
       if (err) throw err;
     })
-    //$currentTestAndPacking.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0};
-    //$currentPunching.data = {productCounter : 0, cabinetTemp : 0, cabinetHumidity : 0, oilPressure : 0, oilTemp : 0, oilLevel : 0};
   }, 86400000); //Update OEE next day
 }, remainPeriod);
-
-
 
 io.on('connection', function (socket) {
 
@@ -471,16 +484,11 @@ function updateOEE() {
 
 //Only apply for today OEE data
 function calculateCurrentOEE(mindsphereData, assetName, callback) {
-  console.log('Mindsphere data');
-  console.log(mindsphereData);
-
   var mongooseModel;
   if (assetName == 'testAndPackingAsset') mongooseModel = planningModel.tePaPlanningModel;
   else mongooseModel = planningModel.punchingPlanningModel;
 
   planningModel.getPlanningPeriod('day', mongooseModel, assetName, function (planningObject) {
-    console.log('Planning object');
-    console.log(planningObject);
     var plannedWorkingTime = planningObject.data.workTime;
     var productiveTime = mindsphereData.Runtime + mindsphereData.CircleCounter * $fixedPrepareTime;
     var goodProduct = mindsphereData.ProductCounter - mindsphereData.FailProduct;
@@ -494,9 +502,6 @@ function calculateCurrentOEE(mindsphereData, assetName, callback) {
       totalProduct: totalProduct,
       realRunningTime: realRunningTime
     });
-
-    console.log("OEE value");
-    console.log(oeeObject);
 
     callback({
       oee: [{ date: moment().format('YYYY-MM-DD'), value: oeeObject.oee }],
@@ -686,26 +691,14 @@ function write_data_to_excel (asset, mode)
     oeeModel.punchingOeeParamModel.find({date : {$gte : startDate, $lte : endDate}} , function(err, result) {
       if(err) throw err;
       else {
+        console.log("www - Create excel report - Result");
+        console.log(result);
         var title = excel.generateTitle(mode , 'punchingAsset');
         excel.createReport(sampleFile, destFile, title , result, function(status) {
           if (status) {
             excel.modifyReport(destFile, sampleFileWithMacro, destFileWithMacro, function(result) {
               if (result) fs.rename(destFileWithMacro, report_title, function() {});
             });
-
-            // async.series([
-            //   function(callback) {
-            //     var wbReport = excelMacro.readFile(destFile);
-            //     var wbMacro = excelMacro.readFile(sampleFileWithMacro , {bookVBA : true});
-            //     wbMacro.Sheets["Sheet1"] = wbReport.Sheets["Sheet1"];
-            //     excelMacro.writeFile(wbMacro, destFileWithMacro, {bookVBA : true});
-            //     callback();
-            //   },
-            //   function(callback) {
-            //     res.download(destFileWithMacro);
-            //     callback();
-            //   }
-            // ])
           }
         });
       }
@@ -720,19 +713,6 @@ function write_data_to_excel (asset, mode)
             excel.modifyReport(destFile, sampleFileWithMacro, destFileWithMacro, function(result) {
               if (result) fs.rename(destFileWithMacro, report_title, function() {});
             });
-            // async.series([
-            //   function(callback) {
-            //     var wbReport = excelMacro.readFile(destFile);
-            //     var wbMacro = excelMacro.readFile(sampleFileWithMacro , {bookVBA : true});
-            //     wbMacro.Sheets["Sheet1"] = wbReport.Sheets["Sheet1"];
-            //     excelMacro.writeFile(wbMacro, destFileWithMacro, {bookVBA : true});
-            //     callback();
-            //   },
-            //   function(callback) {
-            //     res.download(destFileWithMacro);
-            //     callback();
-            //   }
-            // ])
           }
         })
       }

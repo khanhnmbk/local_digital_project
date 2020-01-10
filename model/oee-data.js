@@ -558,7 +558,6 @@ function todayOEE(mindsphereData, assetName) {
         var goodProduct = mindsphereData.ProductCounter - mindsphereData.FailProduct;
         var realRunningTime = productiveTime + mindsphereData.PrepareTime + mindsphereData.MaintenanceTime + mindsphereData.RepairTime;
 
-
         //Write to OEE params 
         var model;
         if (assetName == 'testAndPackingAsset') {
@@ -693,54 +692,6 @@ function longPeriodOEE(oeeParamModel, assetName, type) {
                 }
                 _callback();
             })
-
-
-            // planning.getPlanningPeriod(type, planningModel, assetName, function (planningObject) {
-            //     console.log(planningObject);
-            //     oeeObject = calculateOEE({
-            //         isOutput: isOutput,
-            //         realtimeMachine: realtimeMachine,
-            //         plannedTimeMachine: planningObject.data.workTime,
-            //         goodProduct: goodProduct,
-            //         totalProduct: totalProduct
-            //     });
-            //     var _time;
-            //     switch (type) {
-            //         case 'week': {
-            //             _time = moment().format(moment.HTML5_FMT.WEEK);
-            //             break;
-            //         }
-            //         case 'month': {
-            //             _time = moment().format('YYYY-MM');
-            //             break;
-            //         }
-            //         case 'quarter': {
-            //             _time = moment().format('YYYY qQ');
-            //             break;
-            //         }
-            //         case 'year': {
-            //             _time = moment().format('YYYY');
-            //             break;
-            //         }
-            //     }
-            //     oeeModel.findOne({ type: type, date: _time }, function (err, result) {
-            //         if (err) throw err;
-            //         else {
-            //             if (result) {
-            //                 result.oee = oeeObject.oee;
-            //                 result.availability = oeeObject.availability;
-            //                 result.performance = oeeObject.performance;
-            //                 result.quality = oeeObject.quality;
-            //                 result.timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
-            //                 result.save();
-            //                 console.log('Updated data');
-            //             } else {
-            //                 createNewData(assetName, { date: _time, value: oeeObject }, type);
-            //             }
-            //         }
-            //         _callback();
-            //     })
-            // });
         }
     ])
 
