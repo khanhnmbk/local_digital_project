@@ -35,7 +35,7 @@ function initReadingList(s7Connection, items) {
 function readAllData(s7Connection, callback) {
 	s7Connection.readAllItems(function(err, values) {
 		if (err) {
-			console.log(err);
+			throw err;
 			callback({});
 		} else {
 			callback(values);

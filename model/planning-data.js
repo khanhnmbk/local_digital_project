@@ -77,7 +77,7 @@ function getPlan(week, mongooseModel , assetName,  callback) {
             $lte : endWeek,
         }
     }, function(err, data){
-        if (err) console.log(err);
+        if (err) throw err;
         else if (data.length > 0) {
             console.log(data)
             returnObject.asset = assetName;
@@ -102,7 +102,7 @@ function getPlan(week, mongooseModel , assetName,  callback) {
 //Find existing setup. Return _id or null
 function getExistingItem(mongooseModel, checkData, callback) {
     mongooseModel.findOne({'week' : checkData.week, 'date' : checkData.date, 'startTime' : checkData.startTime, 'stopTime' : checkData.stopTime}, function(err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
            callback(result , checkData.mode);
         }
@@ -164,7 +164,7 @@ function getPlanningPeriod(type, mongooseModel, assetName, callback) {
         //Working
         function(_callback) {
             mongooseModel.find({date : {$gte : _startDate, $lte : _stopDate} , mode : 'working'}, function(err, result) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result.length>0) {
                     returnObject.data.workTime = result.length * result[0].interval;
                 } else returnObject.data.workTime = 420 * numberOfDays;
@@ -175,7 +175,7 @@ function getPlanningPeriod(type, mongooseModel, assetName, callback) {
         function(_callback) {
             mongooseModel.find({date : {$gte : _startDate, $lte : _stopDate} , mode : 'break'}, function(err, result) {
                 console.log(result)
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result.length>0) {
                     returnObject.data.breakTime = result.length * result[0].interval;
                 } else returnObject.data.breakTime = 60 * numberOfDays;
@@ -185,7 +185,7 @@ function getPlanningPeriod(type, mongooseModel, assetName, callback) {
         //Maintenance
         function(_callback) {
             mongooseModel.find({date : {$gte : _startDate, $lte : _stopDate} , mode : 'maintenance'}, function(err, result) {
-                if (err) console.log(err);
+                if (err) throw err;
                 else if (result.length>0) {
                     returnObject.data.maintenanceTime = result.length * result[0].interval;
                 } else returnObject.data.maintenanceTime = 0;
@@ -193,7 +193,7 @@ function getPlanningPeriod(type, mongooseModel, assetName, callback) {
             });
         }
     ] , function(err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else callback(returnObject);
     })
 }

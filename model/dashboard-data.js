@@ -328,7 +328,7 @@ function getData(testAndPackingModel, punchingModel, callback) {
             });
         },
     ], function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var returnData = {
                 testAndPackingAsset: {
@@ -361,7 +361,7 @@ function getToday(mongoModel, assetName, _dataSchema, callback) {
             $lt: moment(today).add(1, 'days').format('YYYY-MM-DD'),
         }
     }, function (err, data) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             for (var i = 0; i < data.length; i++) {
                 switch (data[i].name) {
@@ -423,7 +423,7 @@ function getWeek(mongoModel, assetName, _dataSchema, callback) {
         
         console.log(data);
 
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var arrCabinetTemp = {
                 label: [],
@@ -566,7 +566,7 @@ function getMonth(month, mongoModel, assetName, _dataSchema, callback) {
             $lt: endMonth,
         }
     }, function (err, data) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var arrCabinetTemp = {
                 label: [],
@@ -711,7 +711,7 @@ function getQuarter( mongoModel, assetName, _dataSchema, callback) {
             $lt: endQuarter,
         }
     }, function (err, data) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var arrCabinetTemp = {
                 label: [],
@@ -870,7 +870,7 @@ function getYear( mongoModel, assetName, _dataSchema, callback) {
             $lt: endYear,
         }
     }, function (err, data) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var arrCabinetTemp = {
                 label: [],
@@ -1195,7 +1195,7 @@ function getYear( mongoModel, assetName, _dataSchema, callback) {
 
 //         }
 //     ], function (err, result) {
-//         if (err) console.log(err);
+//         if (err) throw err;
 //         else {
 //             if (assetName == 'punchingAsset') _callback({ cabinetTemp, cabinetHumidity, oilPressure, oilTemp, oilLevel })
 //             else _callback({ cabinetTemp, cabinetHumidity })
@@ -1279,7 +1279,7 @@ function getYear( mongoModel, assetName, _dataSchema, callback) {
 //             }
 //         }
 //     ], function(err, result) {
-//         if (err) console.log(err);
+//         if (err) throw err;
 //         else _callback(objReturn);
 //     });
 
@@ -1308,7 +1308,7 @@ function getYear( mongoModel, assetName, _dataSchema, callback) {
 
 //     //     }
 //     // ], function(err,result) {
-//     //     if (err) console.log(err);
+//     //     if (err) throw err;
 //     //     else {
 //     //         console.log(objValue)
 //     //         if (objValue['cabinetTemp'].length == arrMonth.length) {
@@ -1342,7 +1342,7 @@ function getYear( mongoModel, assetName, _dataSchema, callback) {
 //     //             });
 //     //         }
 //     //     ] , function(err, result) {
-//     //         if (err) console.log(err);
+//     //         if (err) throw err;
 //     //         else if (objValue['cabinetTemp'].length == arrMonth.length) {
 //     //             for (var _item in objValue) {
 //     //                 objReturn[_item] = {
@@ -1620,7 +1620,7 @@ function getTodayData(testAndPackingModel, punchingModel, callback) {
             });
         },
     ], function(err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var returnData = {
                 testAndPackingAsset: {
@@ -1877,7 +1877,7 @@ function getWeekData(testAndPackingModel, punchingModel, callback) {
             });
         },
     ], function(err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var returnData = {
                 testAndPackingAsset: {
@@ -2134,7 +2134,7 @@ function getMonthData(testAndPackingModel, punchingModel, callback) {
             });
         },
     ], function(err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var returnData = {
                 testAndPackingAsset: {
@@ -2391,7 +2391,7 @@ function getQuarterData(testAndPackingModel, punchingModel, callback) {
             });
         },
     ], function(err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var returnData = {
                 testAndPackingAsset: {
@@ -2649,7 +2649,7 @@ function getYearData(testAndPackingModel, punchingModel, callback) {
             });
         },
     ], function(err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         else {
             var returnData = {
                 testAndPackingAsset: {

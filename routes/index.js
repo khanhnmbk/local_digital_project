@@ -59,7 +59,7 @@ router.get('/oee/:asset/report/:mode', function(req, res, next) {
 
   if (req.params.asset == 'punching') {
     oeeModel.punchingOeeParamModel.find({date : {$gte : startDate, $lte : endDate}} , function(err, result) {
-      if(err) console.log(err);
+      if(err) throw err;
       else {
         var title = excel.generateTitle(req.params.mode , 'punchingAsset');
         excel.createReport(sampleFile, destFile, title , result, function(status) {
@@ -87,7 +87,7 @@ router.get('/oee/:asset/report/:mode', function(req, res, next) {
     });
   } else {  //Test and packing
     oeeModel.tePaOeeParamModel.find({date : {$gte : startDate, $lte : endDate}} , function(err, result) {
-      if (err) console.log(err);
+      if (err) throw err;
       else {
         var title = excel.generateTitle(req.params.mode, 'testAndPackingAsset');
         excel.createReport(sampleFile, destFile, title, result, function(status) {
